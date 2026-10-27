@@ -356,8 +356,29 @@ button {
   image-rendering: pixelated;
 }
 
+/* Iconos dibujados con SVG dentro del botón (pantalla completa) */
+.boton-icono svg {
+  width: 26px;
+  height: 26px;
+  fill: var(--texto);
+}
+
+.boton-pantalla .icono-achicar,
+.boton-pantalla.activa .icono-agrandar {
+  display: none;
+}
+
+.boton-pantalla.activa .icono-achicar {
+  display: block;
+}
+
 .boton-icono[aria-pressed="true"] {
   border-color: var(--alerta);
+}
+
+/* En pantalla completa el borde es celeste (no es una alerta como el silencio) */
+.boton-pantalla[aria-pressed="true"] {
+  border-color: var(--foco);
 }
 
 /* 5. PANTALLAS Y PANELES ================================================== */
@@ -1867,12 +1888,85 @@ kbd.tecla-defensa {
 
 /* Horizontal: joystick a la izquierda y botones a la derecha */
 @media (orientation: landscape) {
+  /* Versión 3.6: la cancha usa toda la altura de la pantalla. La barra de
+     arriba se reparte en los costados, encima del joystick y los botones:
+     a la izquierda pausa, pantalla completa y sonido; a la derecha el marcador
+     y el reloj. Así la cancha se ve mucho más grande. */
   .tactil .pantalla-partida {
     grid-template-columns: auto minmax(0, 1fr) auto;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr);
     grid-template-areas:
-      "hud hud hud"
-      "izq cancha der";
+      "hud-izq . hud-der"
+      "hud-izq2 . hud-der2"
+      "izq . der";
+    column-gap: 10px;
+    padding-block: 6px;
+  }
+
+  /* La cancha ocupa toda la pantalla; los controles van encima, a los lados */
+  .tactil .zona-cancha {
+    grid-area: 1 / 1 / -1 / -1;
+  }
+
+  .tactil .hud {
+    display: contents;
+  }
+
+  .tactil .hud > *,
+  .tactil .pad,
+  .tactil .pad-j1 .joystick,
+  .tactil .pad-j1 .pad-botones {
+    position: relative;
+    z-index: 2;
+  }
+
+  .tactil .boton-icono {
+    width: 44px;
+    height: 44px;
+    padding: 6px;
+  }
+
+  .tactil #boton-pausa {
+    grid-area: hud-izq;
+    justify-self: start;
+  }
+
+  .tactil #boton-pantalla {
+    grid-area: hud-izq;
+    justify-self: end;
+  }
+
+  .tactil #boton-sonido {
+    grid-area: hud-izq2;
+    justify-self: start;
+    margin-top: 6px;
+  }
+
+  /* Marcador compacto: capitanes y goles (los nombres se ven sobre la cancha) */
+  .tactil .marcador {
+    grid-area: hud-der;
+    flex: none;
+    justify-self: end;
+    gap: 6px;
+  }
+
+  .tactil .marcador-nombre {
+    display: none;
+  }
+
+  /* Solo los goles, con el color de cada equipo: así el marcador es angosto */
+  .tactil .marcador-capitan {
+    display: none;
+  }
+
+  .tactil .marcador-goles {
+    font-size: 1.9rem;
+  }
+
+  .tactil .reloj {
+    grid-area: hud-der2;
+    justify-self: end;
+    margin-top: 4px;
   }
 
   /* 1 jugador: el joystick va a un lado y los botones al otro */
@@ -1888,6 +1982,8 @@ kbd.tecla-defensa {
 
   .pantalla-partida[data-modo="1j"] .pad-j1 .pad-botones {
     grid-area: der;
+    grid-template-columns: var(--boton-tactil);   /* uno encima del otro: columna angosta */
+    justify-self: end;
     align-self: end;
     margin-bottom: 12px;
   }
@@ -1906,8 +2002,15 @@ kbd.tecla-defensa {
     grid-area: der;
   }
 
+  /* Con 2 jugadores, los botones van en una columna para que el pad sea angosto
+     y la cancha quede al centro sin que nada la tape */
   .pantalla-partida[data-modo="2j"] .pad-botones {
+    grid-template-columns: var(--boton-tactil);
     gap: 8px;
+  }
+
+  .tactil .pantalla-partida[data-modo="2j"] .zona-cancha {
+    grid-area: 1 / 2 / -1 / 3;
   }
 
   .tactil .pantalla-partida[data-modo="2j"] {
@@ -2388,6 +2491,18 @@ kbd.tecla-defensa {
         <button type="button" id="boton-sonido" class="boton-icono" aria-label="Silencio" aria-pressed="false" title="Silencio (M)">
           <img id="icono-sonido" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MCA4MCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBzaGFwZS1yZW5kZXJpbmc9ImNyaXNwRWRnZXMiIHJvbGU9ImltZyI+PHRpdGxlPlNvbmlkbyBhY3RpdmFkbzwvdGl0bGU+PHJlY3QgeD0iMzIuMDAiIHk9IjguMDAiIHdpZHRoPSI4LjAwIiBoZWlnaHQ9IjguMDAiIGZpbGw9IiNmYmY1ZTQiLz48cmVjdCB4PSI2NC4wMCIgeT0iOC4wMCIgd2lkdGg9IjguMDAiIGhlaWdodD0iOC4wMCIgZmlsbD0iIzNlZTRmZiIvPjxyZWN0IHg9IjI0LjAwIiB5PSIxNi4wMCIgd2lkdGg9IjguMDAiIGhlaWdodD0iOC4wMCIgZmlsbD0iI2ZiZjVlNCIvPjxyZWN0IHg9IjMyLjAwIiB5PSIxNi4wMCIgd2lkdGg9IjguMDAiIGhlaWdodD0iOC4wMCIgZmlsbD0iI2ZiZjVlNCIvPjxyZWN0IHg9IjQ4LjAwIiB5PSIxNi4wMCIgd2lkdGg9IjguMDAiIGhlaWdodD0iOC4wMCIgZmlsbD0iIzNlZTRmZiIvPjxyZWN0IHg9IjcyLjAwIiB5PSIxNi4wMCIgd2lkdGg9IjguMDAiIGhlaWdodD0iOC4wMCIgZmlsbD0iIzNlZTRmZiIvPjxyZWN0IHg9IjguMDAiIHk9IjI0LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjZmJmNWU0Ii8+PHJlY3QgeD0iMTYuMDAiIHk9IjI0LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjZmJmNWU0Ii8+PHJlY3QgeD0iMjQuMDAiIHk9IjI0LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjZmJmNWU0Ii8+PHJlY3QgeD0iMzIuMDAiIHk9IjI0LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjZmJmNWU0Ii8+PHJlY3QgeD0iNTYuMDAiIHk9IjI0LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjM2VlNGZmIi8+PHJlY3QgeD0iNzIuMDAiIHk9IjI0LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjM2VlNGZmIi8+PHJlY3QgeD0iOC4wMCIgeT0iMzIuMDAiIHdpZHRoPSI4LjAwIiBoZWlnaHQ9IjguMDAiIGZpbGw9IiNmYmY1ZTQiLz48cmVjdCB4PSIxNi4wMCIgeT0iMzIuMDAiIHdpZHRoPSI4LjAwIiBoZWlnaHQ9IjguMDAiIGZpbGw9IiNmYmY1ZTQiLz48cmVjdCB4PSIyNC4wMCIgeT0iMzIuMDAiIHdpZHRoPSI4LjAwIiBoZWlnaHQ9IjguMDAiIGZpbGw9IiNmYmY1ZTQiLz48cmVjdCB4PSIzMi4wMCIgeT0iMzIuMDAiIHdpZHRoPSI4LjAwIiBoZWlnaHQ9IjguMDAiIGZpbGw9IiNmYmY1ZTQiLz48cmVjdCB4PSI1Ni4wMCIgeT0iMzIuMDAiIHdpZHRoPSI4LjAwIiBoZWlnaHQ9IjguMDAiIGZpbGw9IiMzZWU0ZmYiLz48cmVjdCB4PSI3Mi4wMCIgeT0iMzIuMDAiIHdpZHRoPSI4LjAwIiBoZWlnaHQ9IjguMDAiIGZpbGw9IiMzZWU0ZmYiLz48cmVjdCB4PSI4LjAwIiB5PSI0MC4wMCIgd2lkdGg9IjguMDAiIGhlaWdodD0iOC4wMCIgZmlsbD0iI2ZiZjVlNCIvPjxyZWN0IHg9IjE2LjAwIiB5PSI0MC4wMCIgd2lkdGg9IjguMDAiIGhlaWdodD0iOC4wMCIgZmlsbD0iI2ZiZjVlNCIvPjxyZWN0IHg9IjI0LjAwIiB5PSI0MC4wMCIgd2lkdGg9IjguMDAiIGhlaWdodD0iOC4wMCIgZmlsbD0iI2ZiZjVlNCIvPjxyZWN0IHg9IjMyLjAwIiB5PSI0MC4wMCIgd2lkdGg9IjguMDAiIGhlaWdodD0iOC4wMCIgZmlsbD0iI2ZiZjVlNCIvPjxyZWN0IHg9IjU2LjAwIiB5PSI0MC4wMCIgd2lkdGg9IjguMDAiIGhlaWdodD0iOC4wMCIgZmlsbD0iIzNlZTRmZiIvPjxyZWN0IHg9IjcyLjAwIiB5PSI0MC4wMCIgd2lkdGg9IjguMDAiIGhlaWdodD0iOC4wMCIgZmlsbD0iIzNlZTRmZiIvPjxyZWN0IHg9IjguMDAiIHk9IjQ4LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjZmJmNWU0Ii8+PHJlY3QgeD0iMTYuMDAiIHk9IjQ4LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjZmJmNWU0Ii8+PHJlY3QgeD0iMjQuMDAiIHk9IjQ4LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjZmJmNWU0Ii8+PHJlY3QgeD0iMzIuMDAiIHk9IjQ4LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjZmJmNWU0Ii8+PHJlY3QgeD0iNTYuMDAiIHk9IjQ4LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjM2VlNGZmIi8+PHJlY3QgeD0iNzIuMDAiIHk9IjQ4LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjM2VlNGZmIi8+PHJlY3QgeD0iMjQuMDAiIHk9IjU2LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjZmJmNWU0Ii8+PHJlY3QgeD0iMzIuMDAiIHk9IjU2LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjZmJmNWU0Ii8+PHJlY3QgeD0iNDguMDAiIHk9IjU2LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjM2VlNGZmIi8+PHJlY3QgeD0iNzIuMDAiIHk9IjU2LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjM2VlNGZmIi8+PHJlY3QgeD0iMzIuMDAiIHk9IjY0LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjZmJmNWU0Ii8+PHJlY3QgeD0iNjQuMDAiIHk9IjY0LjAwIiB3aWR0aD0iOC4wMCIgaGVpZ2h0PSI4LjAwIiBmaWxsPSIjM2VlNGZmIi8+PC9zdmc+Cg==" alt="" width="80" height="80">
         </button>
+
+        <!-- Pantalla completa (se esconde si el navegador no la permite, como en iPhone) -->
+        <button type="button" id="boton-pantalla" class="boton-icono boton-pantalla" aria-label="Pantalla completa" aria-pressed="false" title="Pantalla completa">
+          <!-- Icono pixelado: cuatro esquinas hacia afuera (agrandar) -->
+          <svg class="icono-agrandar" viewBox="0 0 10 10" width="26" height="26" aria-hidden="true" focusable="false">
+            <path d="M0 0h4v1H1v3H0zM6 0h4v4H9V1H6zM0 6h1v3h3v1H0zM9 6h1v4H6V9h3z"></path>
+          </svg>
+          <!-- Icono pixelado: cuatro esquinas hacia adentro (achicar) -->
+          <svg class="icono-achicar" viewBox="0 0 10 10" width="26" height="26" aria-hidden="true" focusable="false">
+            <path d="M3 0h1v4H0V3h3zM6 0h1v3h3v1H6zM0 6h4v4H3V7H0zM6 6h4v1H7v3H6z"></path>
+          </svg>
+        </button>
       </header>
 
       <!-- Cancha dibujada con canvas -->
@@ -2487,7 +2602,7 @@ kbd.tecla-defensa {
 <script>
 'use strict';
 /* ==========================================================================
-   GALAXY GOL · js/script.js · versión 3.5
+   GALAXY GOL · js/script.js · versión 3.6
    Fútbol arcade 2D de alienígenas. Autor: David Santiago Sarmiento Salguero.
 
    Índice:
@@ -2829,6 +2944,7 @@ const dom = {
   segmentos: $('#reloj-segmentos'),
   botonPausa: $('#boton-pausa'),
   botonSonido: $('#boton-sonido'),
+  botonPantalla: $('#boton-pantalla'),
   iconoSonido: $('#icono-sonido'),
   botonContinuar: $('#boton-continuar'),
   resumenPausa: $('#resumen-pausa'),
@@ -3104,6 +3220,42 @@ function alternarSilencio() {
   anunciar(sonido.silenciado ? 'Sonido apagado.' : 'Sonido encendido.');
 }
 
+// ---- Pantalla completa (versión 3.6) ----
+// Esconde la barra del navegador. En celulares Android, además, deja la
+// pantalla acostada. En iPhone no existe para páginas web: el botón se esconde.
+const elementoEnPantallaCompleta = () => document.fullscreenElement || document.webkitFullscreenElement || null;
+
+function pantallaCompletaDisponible() {
+  const raiz = document.documentElement;
+  const sePuede = document.fullscreenEnabled || document.webkitFullscreenEnabled;
+  return Boolean((raiz.requestFullscreen || raiz.webkitRequestFullscreen) && sePuede);
+}
+
+async function alternarPantallaCompleta() {
+  const raiz = document.documentElement;
+  try {
+    if (elementoEnPantallaCompleta()) {
+      await (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    } else {
+      await (raiz.requestFullscreen || raiz.webkitRequestFullscreen).call(raiz, { navigationUI: 'hide' });
+      // En celular, se intenta dejar la pantalla acostada (si el sistema lo permite)
+      if (document.body.classList.contains('tactil') && screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape').catch(() => {});
+      }
+    }
+  } catch (error) {
+    ponerMensaje('Sin pantalla completa aquí', true, 2);
+    anunciar('Este navegador no deja usar pantalla completa aquí.');
+  }
+}
+
+function pintarBotonPantalla() {
+  const activa = Boolean(elementoEnPantallaCompleta());
+  dom.botonPantalla.classList.toggle('activa', activa);
+  dom.botonPantalla.setAttribute('aria-pressed', String(activa));
+  dom.botonPantalla.title = activa ? 'Salir de pantalla completa' : 'Pantalla completa';
+}
+
 function pintarBotonSonido() {
   dom.botonSonido.setAttribute('aria-pressed', String(sonido.silenciado));
   dom.iconoSonido.src = sonido.silenciado ? IMAGENES.silencio : IMAGENES.sonido;
@@ -3206,6 +3358,16 @@ dom.botonSonido.addEventListener('click', (evento) => {
   // Con mouse o dedo el foco vuelve a la cancha para no robar teclas al juego
   if (evento.detail > 0 && !juego.pausado) dom.canvas.focus();
 });
+dom.botonPantalla.addEventListener('click', async (evento) => {
+  await alternarPantallaCompleta();
+  if (evento.detail > 0 && !juego.pausado) dom.canvas.focus();
+});
+for (const tipo of ['fullscreenchange', 'webkitfullscreenchange']) {
+  document.addEventListener(tipo, () => {
+    pintarBotonPantalla();
+    ajustarCanvas();
+  });
+}
 dom.tutorialSaltar.addEventListener('click', (evento) => {
   siguientePasoTutorial();
   if (evento.detail > 0) dom.canvas.focus();
@@ -7015,6 +7177,8 @@ function iniciar() {
   cargarHojas();
   sonido.cargarArchivos();
   pintarBotonSonido();
+  dom.botonPantalla.hidden = !pantallaCompletaDisponible();
+  pintarBotonPantalla();
   pintarLogros();
   if ('ResizeObserver' in window) new ResizeObserver(ajustarCanvas).observe(dom.zona);
   window.addEventListener('resize', ajustarCanvas);

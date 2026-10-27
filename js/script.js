@@ -1,6 +1,6 @@
 'use strict';
 /* ==========================================================================
-   GALAXY GOL · js/script.js · versión 3.5
+   GALAXY GOL · js/script.js · versión 3.6
    Fútbol arcade 2D de alienígenas. Autor: David Santiago Sarmiento Salguero.
 
    Índice:
@@ -342,6 +342,7 @@ const dom = {
   segmentos: $('#reloj-segmentos'),
   botonPausa: $('#boton-pausa'),
   botonSonido: $('#boton-sonido'),
+  botonPantalla: $('#boton-pantalla'),
   iconoSonido: $('#icono-sonido'),
   botonContinuar: $('#boton-continuar'),
   resumenPausa: $('#resumen-pausa'),
@@ -617,6 +618,42 @@ function alternarSilencio() {
   anunciar(sonido.silenciado ? 'Sonido apagado.' : 'Sonido encendido.');
 }
 
+// ---- Pantalla completa (versión 3.6) ----
+// Esconde la barra del navegador. En celulares Android, además, deja la
+// pantalla acostada. En iPhone no existe para páginas web: el botón se esconde.
+const elementoEnPantallaCompleta = () => document.fullscreenElement || document.webkitFullscreenElement || null;
+
+function pantallaCompletaDisponible() {
+  const raiz = document.documentElement;
+  const sePuede = document.fullscreenEnabled || document.webkitFullscreenEnabled;
+  return Boolean((raiz.requestFullscreen || raiz.webkitRequestFullscreen) && sePuede);
+}
+
+async function alternarPantallaCompleta() {
+  const raiz = document.documentElement;
+  try {
+    if (elementoEnPantallaCompleta()) {
+      await (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    } else {
+      await (raiz.requestFullscreen || raiz.webkitRequestFullscreen).call(raiz, { navigationUI: 'hide' });
+      // En celular, se intenta dejar la pantalla acostada (si el sistema lo permite)
+      if (document.body.classList.contains('tactil') && screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape').catch(() => {});
+      }
+    }
+  } catch (error) {
+    ponerMensaje('Sin pantalla completa aquí', true, 2);
+    anunciar('Este navegador no deja usar pantalla completa aquí.');
+  }
+}
+
+function pintarBotonPantalla() {
+  const activa = Boolean(elementoEnPantallaCompleta());
+  dom.botonPantalla.classList.toggle('activa', activa);
+  dom.botonPantalla.setAttribute('aria-pressed', String(activa));
+  dom.botonPantalla.title = activa ? 'Salir de pantalla completa' : 'Pantalla completa';
+}
+
 function pintarBotonSonido() {
   dom.botonSonido.setAttribute('aria-pressed', String(sonido.silenciado));
   dom.iconoSonido.src = sonido.silenciado ? IMAGENES.silencio : IMAGENES.sonido;
@@ -719,6 +756,16 @@ dom.botonSonido.addEventListener('click', (evento) => {
   // Con mouse o dedo el foco vuelve a la cancha para no robar teclas al juego
   if (evento.detail > 0 && !juego.pausado) dom.canvas.focus();
 });
+dom.botonPantalla.addEventListener('click', async (evento) => {
+  await alternarPantallaCompleta();
+  if (evento.detail > 0 && !juego.pausado) dom.canvas.focus();
+});
+for (const tipo of ['fullscreenchange', 'webkitfullscreenchange']) {
+  document.addEventListener(tipo, () => {
+    pintarBotonPantalla();
+    ajustarCanvas();
+  });
+}
 dom.tutorialSaltar.addEventListener('click', (evento) => {
   siguientePasoTutorial();
   if (evento.detail > 0) dom.canvas.focus();
@@ -4528,6 +4575,8 @@ function iniciar() {
   cargarHojas();
   sonido.cargarArchivos();
   pintarBotonSonido();
+  dom.botonPantalla.hidden = !pantallaCompletaDisponible();
+  pintarBotonPantalla();
   pintarLogros();
   if ('ResizeObserver' in window) new ResizeObserver(ajustarCanvas).observe(dom.zona);
   window.addEventListener('resize', ajustarCanvas);

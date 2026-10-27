@@ -389,6 +389,18 @@
         <button type="button" id="boton-sonido" class="boton-icono" aria-label="Silencio" aria-pressed="false" title="Silencio (M)">
           <img id="icono-sonido" src="img/icono-sonido.svg" alt="" width="80" height="80">
         </button>
+
+        <!-- Pantalla completa (se esconde si el navegador no la permite, como en iPhone) -->
+        <button type="button" id="boton-pantalla" class="boton-icono boton-pantalla" aria-label="Pantalla completa" aria-pressed="false" title="Pantalla completa">
+          <!-- Icono pixelado: cuatro esquinas hacia afuera (agrandar) -->
+          <svg class="icono-agrandar" viewBox="0 0 10 10" width="26" height="26" aria-hidden="true" focusable="false">
+            <path d="M0 0h4v1H1v3H0zM6 0h4v4H9V1H6zM0 6h1v3h3v1H0zM9 6h1v4H6V9h3z"></path>
+          </svg>
+          <!-- Icono pixelado: cuatro esquinas hacia adentro (achicar) -->
+          <svg class="icono-achicar" viewBox="0 0 10 10" width="26" height="26" aria-hidden="true" focusable="false">
+            <path d="M3 0h1v4H0V3h3zM6 0h1v3h3v1H6zM0 6h4v4H3V7H0zM6 6h4v1H7v3H6z"></path>
+          </svg>
+        </button>
       </header>
 
       <!-- Cancha dibujada con canvas -->

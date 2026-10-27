@@ -340,8 +340,29 @@ button {
   image-rendering: pixelated;
 }
 
+/* Iconos dibujados con SVG dentro del botón (pantalla completa) */
+.boton-icono svg {
+  width: 26px;
+  height: 26px;
+  fill: var(--texto);
+}
+
+.boton-pantalla .icono-achicar,
+.boton-pantalla.activa .icono-agrandar {
+  display: none;
+}
+
+.boton-pantalla.activa .icono-achicar {
+  display: block;
+}
+
 .boton-icono[aria-pressed="true"] {
   border-color: var(--alerta);
+}
+
+/* En pantalla completa el borde es celeste (no es una alerta como el silencio) */
+.boton-pantalla[aria-pressed="true"] {
+  border-color: var(--foco);
 }
 
 /* 5. PANTALLAS Y PANELES ================================================== */
@@ -1851,12 +1872,85 @@ kbd.tecla-defensa {
 
 /* Horizontal: joystick a la izquierda y botones a la derecha */
 @media (orientation: landscape) {
+  /* Versión 3.6: la cancha usa toda la altura de la pantalla. La barra de
+     arriba se reparte en los costados, encima del joystick y los botones:
+     a la izquierda pausa, pantalla completa y sonido; a la derecha el marcador
+     y el reloj. Así la cancha se ve mucho más grande. */
   .tactil .pantalla-partida {
     grid-template-columns: auto minmax(0, 1fr) auto;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr);
     grid-template-areas:
-      "hud hud hud"
-      "izq cancha der";
+      "hud-izq . hud-der"
+      "hud-izq2 . hud-der2"
+      "izq . der";
+    column-gap: 10px;
+    padding-block: 6px;
+  }
+
+  /* La cancha ocupa toda la pantalla; los controles van encima, a los lados */
+  .tactil .zona-cancha {
+    grid-area: 1 / 1 / -1 / -1;
+  }
+
+  .tactil .hud {
+    display: contents;
+  }
+
+  .tactil .hud > *,
+  .tactil .pad,
+  .tactil .pad-j1 .joystick,
+  .tactil .pad-j1 .pad-botones {
+    position: relative;
+    z-index: 2;
+  }
+
+  .tactil .boton-icono {
+    width: 44px;
+    height: 44px;
+    padding: 6px;
+  }
+
+  .tactil #boton-pausa {
+    grid-area: hud-izq;
+    justify-self: start;
+  }
+
+  .tactil #boton-pantalla {
+    grid-area: hud-izq;
+    justify-self: end;
+  }
+
+  .tactil #boton-sonido {
+    grid-area: hud-izq2;
+    justify-self: start;
+    margin-top: 6px;
+  }
+
+  /* Marcador compacto: capitanes y goles (los nombres se ven sobre la cancha) */
+  .tactil .marcador {
+    grid-area: hud-der;
+    flex: none;
+    justify-self: end;
+    gap: 6px;
+  }
+
+  .tactil .marcador-nombre {
+    display: none;
+  }
+
+  /* Solo los goles, con el color de cada equipo: así el marcador es angosto */
+  .tactil .marcador-capitan {
+    display: none;
+  }
+
+  .tactil .marcador-goles {
+    font-size: 1.9rem;
+  }
+
+  .tactil .reloj {
+    grid-area: hud-der2;
+    justify-self: end;
+    margin-top: 4px;
   }
 
   /* 1 jugador: el joystick va a un lado y los botones al otro */
@@ -1872,6 +1966,8 @@ kbd.tecla-defensa {
 
   .pantalla-partida[data-modo="1j"] .pad-j1 .pad-botones {
     grid-area: der;
+    grid-template-columns: var(--boton-tactil);   /* uno encima del otro: columna angosta */
+    justify-self: end;
     align-self: end;
     margin-bottom: 12px;
   }
@@ -1890,8 +1986,15 @@ kbd.tecla-defensa {
     grid-area: der;
   }
 
+  /* Con 2 jugadores, los botones van en una columna para que el pad sea angosto
+     y la cancha quede al centro sin que nada la tape */
   .pantalla-partida[data-modo="2j"] .pad-botones {
+    grid-template-columns: var(--boton-tactil);
     gap: 8px;
+  }
+
+  .tactil .pantalla-partida[data-modo="2j"] .zona-cancha {
+    grid-area: 1 / 2 / -1 / 3;
   }
 
   .tactil .pantalla-partida[data-modo="2j"] {

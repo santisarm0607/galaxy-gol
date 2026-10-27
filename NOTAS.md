@@ -1,4 +1,4 @@
-# Galaxy Gol · notas del proyecto (versión 3.5)
+# Galaxy Gol · notas del proyecto (versión 3.6)
 
 Juego web arcade de fútbol 2D estilo Atari. Tu equipo juega 4 contra 4 contra el equipo de Zorp (rosado), contra un amigo en el mismo dispositivo o **en línea, cada uno en su dispositivo**. Cada jugador tiene un perfil: nombre, nombre del equipo, color y capitán. Gana el primero que llega a 5 goles.
 
@@ -136,3 +136,4 @@ Pausa: P, Espacio o Esc. Silencio: M. Con 1 jugador también sirven las teclas d
 - **Versión 3.3** (22 de octubre de 2026): el jugador 1 usa F (pasar), G (tirar) y H (derrapar), en fila y en el mismo orden que la guía. La guía de botones pasa a la esquina inferior derecha (con 2 jugadores, la del jugador 2 va a la izquierda).
 - **Versión 3.4** (22 de octubre de 2026): pasar y tirar se juntan en un solo botón, **Patear** (F, Ñ o el botón del celular): un toque pasa y mantener carga un tiro con fuerza, con barrita de carga. Derrapar pasa a la G. En celular quedan 2 botones: Patear y Derrapar.
 - **Versión 3.5** (23 de octubre de 2026): carpetas separadas por tipo de código: `css/style.css` y `js/script.js` (antes estaban al lado de `index.html`). No cambia nada del juego.
+- **Versión 3.6** (27 de octubre de 2026): en celular acostado la cancha usa toda la altura (cerca de un 40 % más grande). La barra de arriba se reparte a los costados: pausa, pantalla completa y sonido a la izquierda; goles y reloj a la derecha. Patear y Derrapar van uno encima del otro. Nuevo botón de **pantalla completa** (esconde la barra del navegador y, en Android, deja el celular acostado; en iPhone no existe para páginas web y el botón se esconde).
