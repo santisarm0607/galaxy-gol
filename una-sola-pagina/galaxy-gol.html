@@ -381,6 +381,20 @@ button {
   border-color: var(--foco);
 }
 
+/* Botón de pantalla completa de los menús (versión 3.7):
+   flota en la esquina de arriba a la derecha en todas las pantallas */
+.boton-pantalla-menu {
+  position: fixed;
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  right: calc(12px + env(safe-area-inset-right, 0px));
+  z-index: 20;
+}
+
+/* En la partida se esconde: ahí ya está el botón de la barra de arriba */
+body:has(#pantalla-partida:not([hidden])) .boton-pantalla-menu {
+  display: none;
+}
+
 /* 5. PANTALLAS Y PANELES ================================================== */
 .pantalla {
   height: 100%;
@@ -2122,6 +2136,282 @@ kbd.tecla-defensa {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* ==========================================================================
+   RÉCORDS (versión 3.8): historial de partidos y mejores puntajes
+   ========================================================================== */
+.subtitulo-records {
+  align-self: flex-start;
+  font-family: var(--fuente-titulo);
+  font-size: 1.6rem;
+  color: var(--franja-1);
+}
+
+.lista-records {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.record {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--espacio-2);
+  border: 2px solid var(--panel-borde);
+  border-radius: var(--radio);
+}
+
+.record.ganado {
+  border-color: var(--cometa-oscuro);
+}
+
+.record-marca {
+  font-weight: 700;
+  color: var(--texto-suave);
+}
+
+.record.ganado .record-marca {
+  color: var(--cometa);
+}
+
+.record-texto {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.95rem;
+}
+
+.record-puntos {
+  font-family: var(--fuente-titulo);
+  font-size: 1.5rem;
+  color: var(--franja-1);
+  white-space: nowrap;
+}
+
+.botones-records {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.puntaje-final {
+  margin: 0;
+  font-weight: 700;
+  color: var(--franja-1);
+  text-align: center;
+}
+
+/* ==========================================================================
+   PERFILES Y "PREPARA TU EQUIPO" (versión 3.9)
+   ========================================================================== */
+/* Lista de perfiles guardados */
+.perfiles-zona-lista {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.lista-perfiles {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.perfil-fila {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  background: var(--espacio-2);
+  border: 2px solid var(--panel-borde);
+  border-radius: var(--radio);
+}
+
+.perfil-fila canvas {
+  width: 48px;
+  height: 48px;
+  image-rendering: pixelated;
+}
+
+.perfil-fila-texto {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.perfil-fila-texto strong {
+  font-size: 1.15rem;
+}
+
+.perfil-fila-texto span {
+  font-size: 0.9rem;
+  color: var(--texto-suave);
+}
+
+.perfil-fila-texto .perfil-fila-puntos {
+  font-weight: 700;
+  color: var(--franja-1);
+}
+
+.perfil-fila-botones {
+  display: flex;
+  gap: 8px;
+}
+
+/* Botón pequeño (Editar y Borrar) */
+.boton-mini {
+  min-height: var(--toque-min);
+  padding: 0.3em 0.9em;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 0 var(--boton-sombra);
+}
+
+/* Mensaje cuando falta el nombre o está repetido */
+.error-equipo {
+  margin: 0;
+  padding: 10px 14px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--texto);
+  background: rgba(255, 79, 94, 0.18);
+  border: 2px solid var(--franja-4);
+  border-radius: var(--radio);
+}
+
+/* Prepara tu equipo: 1 o 2 tarjetas */
+.panel-equipo {
+  width: min(100%, 720px);
+}
+
+.panel-equipo:has(.tarjetas-equipo.dos) {
+  width: min(100%, 1100px);
+}
+
+.form-equipo {
+  display: grid;
+  gap: 20px;
+  width: 100%;
+}
+
+.tarjetas-equipo {
+  display: grid;
+  gap: 20px;
+}
+
+.tarjetas-equipo.dos {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+}
+
+.tarjeta-equipo {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  margin: 0;
+  padding: 16px;
+  background: var(--panel);
+  border: 3px solid var(--panel-borde);
+  border-radius: var(--radio);
+}
+
+.tarjeta-equipo-titulo {
+  padding: 0 8px;
+  font-family: var(--fuente-titulo);
+  font-size: 1.7rem;
+  color: var(--franja-1);
+}
+
+/* Perfiles guardados: un toque y se cargan */
+.perfiles-guardados {
+  display: grid;
+  gap: 8px;
+}
+
+.etiqueta-guardados {
+  margin: 0;
+  font-weight: 700;
+}
+
+.chips-perfiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip-perfil {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--toque-min);
+  padding: 6px 12px 6px 8px;
+  font: inherit;
+  font-weight: 700;
+  color: var(--texto);
+  background: var(--espacio-2);
+  border: 3px solid var(--panel-borde);
+  border-radius: var(--radio);
+  cursor: pointer;
+}
+
+.chip-perfil .muestra-color {
+  width: 18px;
+  height: 18px;
+}
+
+.chip-perfil:hover {
+  background: var(--nebulosa);
+}
+
+.chip-perfil[aria-pressed="true"] {
+  background: var(--nebulosa);
+  border-color: var(--franja-1);
+}
+
+.chip-perfil[aria-pressed="true"]::after {
+  content: "✓" / "";
+  color: var(--franja-1);
+}
+
+.chip-perfil:focus-visible {
+  outline: 4px solid var(--foco);
+  outline-offset: 3px;
+}
+
+.chip-nuevo {
+  padding-left: 12px;
+  color: var(--franja-1);
+  border-style: dashed;
+}
+
+/* En celular la fila del perfil se acomoda en dos renglones */
+@media (max-width: 560px) {
+  .perfil-fila {
+    grid-template-columns: auto 1fr;
+  }
+
+  .perfil-fila-botones {
+    grid-column: 1 / -1;
+  }
+
+  .perfil-fila-botones .boton {
+    flex: 1;
+  }
+}
 </style>
 </head>
 <body>
@@ -2141,9 +2431,10 @@ kbd.tecla-defensa {
         <nav class="menu" aria-label="Menú principal">
           <ul class="menu-lista">
             <li><button type="button" class="boton boton-principal" data-ir="pantalla-jugadores">Jugar</button></li>
-            <li><button type="button" class="boton" data-ir="pantalla-perfil">Tu perfil</button></li>
+            <li><button type="button" class="boton" data-ir="pantalla-perfil">Perfiles</button></li>
             <li><button type="button" class="boton" data-ir="pantalla-controles">Controles</button></li>
             <li><button type="button" class="boton" data-ir="pantalla-logros">Logros</button></li>
+            <li><button type="button" class="boton" data-ir="pantalla-records">Récords</button></li>
             <li><button type="button" class="boton" data-ir="pantalla-creditos">Créditos</button></li>
           </ul>
         </nav>
@@ -2175,6 +2466,10 @@ kbd.tecla-defensa {
                 <dt><kbd class="tecla-defensa">G</kbd></dt>
                 <dd>Derrapar (quitar el balón)</dd>
               </div>
+              <div class="accion">
+                <dt><kbd class="tecla-defensa">H</kbd></dt>
+                <dd>Cambiar de alienígena (tócala otra vez para seguir con el siguiente)</dd>
+              </div>
             </dl>
           </section>
 
@@ -2195,6 +2490,10 @@ kbd.tecla-defensa {
               <div class="accion">
                 <dt><kbd class="tecla-defensa"><span aria-hidden="true">.</span><span class="visualmente-oculto">Punto</span></kbd></dt>
                 <dd>Derrapar (quitar el balón)</dd>
+              </div>
+              <div class="accion">
+                <dt><kbd class="tecla-defensa">L</kbd></dt>
+                <dd>Cambiar de alienígena</dd>
               </div>
             </dl>
             <p class="nota-teclas">En un teclado en inglés, la Ñ es la tecla <kbd>;</kbd>.</p>
@@ -2218,7 +2517,7 @@ kbd.tecla-defensa {
               </div>
             </dl>
             <p class="nota-teclas">Jugando solo, sirven los dos bloques: elige el que te quede más cómodo.</p>
-            <p class="nota-teclas">No hay que cambiar de alienígena: siempre manejas al de tu equipo más cercano al balón.</p>
+            <p class="nota-teclas">El juego te cambia solo al alienígena más cercano al balón; con Cambiar eliges tú. Para pasar, apunta hacia un compañero: el aro punteado te muestra a quién le llega.</p>
           </section>
 
           <!-- Celular -->
@@ -2258,7 +2557,7 @@ kbd.tecla-defensa {
           <ul>
             <li>Toca el balón para quedártelo: va pegado a tu pie. Con Patear, un toque corto pasa a un compañero; si lo mantienes y sueltas, tiras al arco (más tiempo, más fuerte). Para elegir palo, mantén la dirección hacia ese lado.</li>
             <li>Para quitarle el balón a un rival, ponte delante de él y derrapa. Si fallas, tardas en levantarte.</li>
-            <li>Cada equipo tiene 4 alienígenas: arquero, defensa, volante y delantero. El aro brillante marca al que manejas, que siempre es el de tu equipo más cercano al balón; el arquero (visera amarilla) lo maneja la máquina.</li>
+            <li>Cada equipo tiene 4 alienígenas: arquero, defensa, volante y delantero. El aro brillante marca al que manejas: el juego te cambia solo al más cercano al balón y con Cambiar (H o L) eliges tú. El arquero (visera amarilla) lo maneja la máquina.</li>
             <li>Si el balón no cruza la mitad de la cancha en 8 segundos, sale un balón nuevo.</li>
             <li>Gana el primero que llegue a 5 goles.</li>
           </ul>
@@ -2276,6 +2575,25 @@ kbd.tecla-defensa {
         <!-- La lista la llena js/script.js con lo que está guardado en el navegador -->
         <ul id="lista-logros" class="lista-logros"></ul>
         <button type="button" class="boton boton-secundario" data-ir="pantalla-inicio" data-volver>Volver</button>
+      </div>
+    </section>
+
+    <!-- 1b2. RÉCORDS (versión 3.8): historial de partidos guardado en el navegador -->
+    <section id="pantalla-records" class="pantalla pantalla-menu" aria-labelledby="titulo-records" hidden>
+      <div class="panel">
+        <h2 id="titulo-records" class="titulo-pantalla" tabindex="-1">Récords</h2>
+        <p class="nota">Se guardan en este navegador. <span id="resumen-records"></span></p>
+        <p id="sin-partidos" class="nota">Todavía no hay partidos. ¡Juega uno para empezar tu historial!</p>
+        <!-- Las listas las llena js/script.js (pintarRecords) -->
+        <h3 class="subtitulo-records">Mejores puntajes</h3>
+        <p class="nota">Cada jugador sale una vez, con su mayor puntaje.</p>
+        <ol id="lista-mejores" class="lista-records"></ol>
+        <h3 class="subtitulo-records">Últimos partidos</h3>
+        <ul id="lista-historial" class="lista-records"></ul>
+        <div class="botones-records">
+          <button type="button" id="boton-reiniciar-records" class="boton boton-secundario">Reiniciar estadísticas</button>
+          <button type="button" class="boton boton-secundario" data-ir="pantalla-inicio" data-volver>Volver</button>
+        </div>
       </div>
     </section>
 
@@ -2299,8 +2617,21 @@ kbd.tecla-defensa {
     <!-- 1d. TU PERFIL =========================================== -->
     <section id="pantalla-perfil" class="pantalla pantalla-menu" aria-labelledby="titulo-perfil" hidden>
       <div class="panel panel-perfil">
-        <h2 id="titulo-perfil" class="titulo-pantalla" tabindex="-1">Tu perfil</h2>
-        <form id="form-perfil" class="form-perfil">
+        <h2 id="titulo-perfil" class="titulo-pantalla" tabindex="-1">Perfiles</h2>
+
+        <!-- Versión 3.9: lista de todos los que han jugado en este navegador (la llena js/script.js) -->
+        <div id="perfiles-zona-lista" class="perfiles-zona-lista">
+          <p class="nota">Cada persona que juega en este navegador queda guardada aquí con su mejor puntaje.</p>
+          <p id="sin-perfiles" class="nota">Todavía no hay perfiles. Se crean solos al jugar, o crea uno aquí.</p>
+          <ul id="lista-perfiles" class="lista-perfiles"></ul>
+          <div class="botones-fila">
+            <button type="button" id="boton-nuevo-perfil" class="boton">Nuevo perfil</button>
+            <button type="button" class="boton boton-secundario" data-ir="pantalla-inicio" data-volver>Volver</button>
+          </div>
+        </div>
+
+        <!-- Formulario para crear o editar un perfil (se muestra al tocar "Editar" o "Nuevo perfil") -->
+        <form id="form-perfil" class="form-perfil" novalidate hidden>
           <!-- Vista previa: tu capitán con el color escogido -->
           <div class="perfil-vista-caja">
             <canvas id="perfil-vista" class="perfil-vista" width="96" height="96" aria-hidden="true"></canvas>
@@ -2311,7 +2642,7 @@ kbd.tecla-defensa {
             <div class="campo">
               <label for="perfil-nombre">Tu nombre</label>
               <input id="perfil-nombre" name="nombre" type="text" maxlength="12" autocomplete="nickname" spellcheck="false" placeholder="Ej.: SantiSarm" aria-describedby="ayuda-nombre">
-              <p id="ayuda-nombre" class="ayuda">Hasta 12 letras. Sale sobre tu alienígena cuando juegas en línea.</p>
+              <p id="ayuda-nombre" class="ayuda">Hasta 12 letras. Es el nombre que sale en los récords.</p>
             </div>
             <div class="campo">
               <label for="perfil-equipo">Nombre de tu equipo</label>
@@ -2343,9 +2674,10 @@ kbd.tecla-defensa {
             <p class="ayuda">El capitán es tu delantero: el alienígena con el que empiezas cada saque.</p>
           </fieldset>
 
+          <p id="perfil-error" class="error-equipo" role="alert" hidden></p>
           <div class="botones-fila">
             <button type="submit" class="boton boton-principal">Guardar</button>
-            <button type="button" id="perfil-volver" class="boton boton-secundario" data-ir="pantalla-inicio" data-volver>Volver</button>
+            <button type="button" id="perfil-cancelar" class="boton boton-secundario">Cancelar</button>
           </div>
         </form>
       </div>
@@ -2402,6 +2734,72 @@ kbd.tecla-defensa {
       </div>
     </section>
 
+    <!-- 2b-bis. PREPARA TU EQUIPO (versión 3.9) ===================
+         Sale después de elegir el modo: nombre, equipo, color y capitán.
+         Las tarjetas (1 o 2) las arma js/script.js copiando la plantilla de abajo. -->
+    <section id="pantalla-equipo" class="pantalla pantalla-menu" aria-labelledby="titulo-equipo" hidden>
+      <div class="panel panel-equipo">
+        <h2 id="titulo-equipo" class="titulo-pantalla" tabindex="-1">Prepara tu equipo</h2>
+        <form id="form-equipo" class="form-equipo" novalidate>
+          <div id="tarjetas-equipo" class="tarjetas-equipo"></div>
+          <p id="error-equipo" class="error-equipo" role="alert" hidden></p>
+          <div class="botones-fila">
+            <button type="submit" id="boton-listo-equipo" class="boton boton-principal">¡A jugar!</button>
+            <button type="button" id="equipo-volver" class="boton boton-secundario">Volver</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Plantilla de una tarjeta de "Prepara tu equipo". __N__ se cambia por 0 o 1. -->
+    <template id="plantilla-equipo">
+      <fieldset class="tarjeta-equipo" data-jugador="__N__">
+        <legend class="tarjeta-equipo-titulo">Tu equipo</legend>
+
+        <div class="perfiles-guardados">
+          <p id="guardados-__N__" class="etiqueta-guardados">Perfiles guardados</p>
+          <div class="chips-perfiles" role="group" aria-labelledby="guardados-__N__"></div>
+        </div>
+
+        <div class="perfil-vista-caja">
+          <canvas class="perfil-vista" width="96" height="96" aria-hidden="true"></canvas>
+          <p class="perfil-resumen"></p>
+        </div>
+
+        <div class="campos-perfil">
+          <div class="campo">
+            <label for="equipo-nombre-__N__">Tu nombre</label>
+            <input id="equipo-nombre-__N__" name="nombre" type="text" maxlength="12" autocomplete="off" spellcheck="false" placeholder="Ej.: SantiSarm" required>
+          </div>
+          <div class="campo">
+            <label for="equipo-equipo-__N__">Nombre de tu equipo</label>
+            <input id="equipo-equipo-__N__" name="equipo" type="text" maxlength="14" autocomplete="off" spellcheck="false" placeholder="Ej.: Los Cometas">
+          </div>
+        </div>
+
+        <fieldset class="grupo-opciones">
+          <legend>Color</legend>
+          <div class="colores">
+            <label class="opcion-color"><input class="visualmente-oculto" type="radio" name="color-__N__" value="celeste"><span class="muestra-color color-celeste" aria-hidden="true"></span><span>Celeste</span></label>
+            <label class="opcion-color"><input class="visualmente-oculto" type="radio" name="color-__N__" value="rosado"><span class="muestra-color color-rosado" aria-hidden="true"></span><span>Rosado</span></label>
+            <label class="opcion-color"><input class="visualmente-oculto" type="radio" name="color-__N__" value="naranja"><span class="muestra-color color-naranja" aria-hidden="true"></span><span>Naranja</span></label>
+            <label class="opcion-color"><input class="visualmente-oculto" type="radio" name="color-__N__" value="morado"><span class="muestra-color color-morado" aria-hidden="true"></span><span>Morado</span></label>
+            <label class="opcion-color"><input class="visualmente-oculto" type="radio" name="color-__N__" value="rojo"><span class="muestra-color color-rojo" aria-hidden="true"></span><span>Rojo</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="grupo-opciones">
+          <legend>Capitán (tu aspecto)</legend>
+          <div class="capitanes">
+            <label class="opcion-capitan"><input class="visualmente-oculto" type="radio" name="capitan-__N__" value="cometa"><canvas data-capitan="cometa" width="48" height="48" aria-hidden="true"></canvas><span class="capitan-nombre">Cometa</span></label>
+            <label class="opcion-capitan"><input class="visualmente-oculto" type="radio" name="capitan-__N__" value="ciclope"><canvas data-capitan="ciclope" width="48" height="48" aria-hidden="true"></canvas><span class="capitan-nombre">Cíclope</span></label>
+            <label class="opcion-capitan"><input class="visualmente-oculto" type="radio" name="capitan-__N__" value="cuernos"><canvas data-capitan="cuernos" width="48" height="48" aria-hidden="true"></canvas><span class="capitan-nombre">Cuernitos</span></label>
+            <label class="opcion-capitan"><input class="visualmente-oculto" type="radio" name="capitan-__N__" value="corona"><canvas data-capitan="corona" width="48" height="48" aria-hidden="true"></canvas><span class="capitan-nombre">Corona</span></label>
+          </div>
+        </fieldset>
+      </fieldset>
+    </template>
+
     <!-- 2c. JUGAR EN LÍNEA (sala) ================================ -->
     <section id="pantalla-red" class="pantalla pantalla-menu" aria-labelledby="titulo-red" hidden>
       <div class="panel panel-sala">
@@ -2449,7 +2847,7 @@ kbd.tecla-defensa {
         <button type="button" id="boton-empezar-red" class="boton boton-principal" hidden>¡A jugar!</button>
 
         <div class="botones-fila">
-          <button type="button" class="boton boton-secundario" data-ir="pantalla-perfil">Editar perfil</button>
+          <button type="button" id="boton-cambiar-equipo" class="boton boton-secundario">Cambiar equipo</button>
           <button type="button" class="boton boton-secundario" data-ir="pantalla-jugadores" data-volver data-salir-sala>Volver</button>
         </div>
         <p class="ayuda ayuda-centrada">Necesita internet en los dos dispositivos. No funciona dentro de la vista previa de Claude: abre el juego con Live Server o desde una página publicada (por ejemplo, GitHub Pages).</p>
@@ -2518,10 +2916,12 @@ kbd.tecla-defensa {
           <div class="guia-jugador" data-jugador="0">
             <span class="guia-accion guia-patear" data-accion="patear" data-nivel="0"><kbd>F</kbd><span class="guia-texto">Patear<small>toca: pasa · mantén: tira</small></span><span class="guia-carga"></span></span>
             <span class="guia-accion" data-accion="derrapar"><kbd>G</kbd>Derrapar</span>
+            <span class="guia-accion" data-accion="cambiar"><kbd>H</kbd>Cambiar</span>
           </div>
           <div class="guia-jugador guia-j2" data-jugador="1">
             <span class="guia-accion guia-patear" data-accion="patear" data-nivel="0"><kbd>Ñ</kbd><span class="guia-texto">Patear<small>toca: pasa · mantén: tira</small></span><span class="guia-carga"></span></span>
             <span class="guia-accion" data-accion="derrapar"><kbd>.</kbd>Derrapar</span>
+            <span class="guia-accion" data-accion="cambiar"><kbd>L</kbd>Cambiar</span>
           </div>
         </div>
 
@@ -2581,6 +2981,7 @@ kbd.tecla-defensa {
         <img id="imagen-final" class="imagen-final" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNzAgMTkwIiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjE5MCIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIiByb2xlPSJpbWciPjx0aXRsZT5ab3JwPC90aXRsZT48cmVjdCB4PSIyMC4wMCIgeT0iMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmZlMTRkIi8+PHJlY3QgeD0iODAuMDAiIHk9IjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmZTE0ZCIvPjxyZWN0IHg9IjE0MC4wMCIgeT0iMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmZlMTRkIi8+PHJlY3QgeD0iMjAuMDAiIHk9IjEwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSI4MC4wMCIgeT0iMTAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iIzhjMTY3MyIvPjxyZWN0IHg9IjE0MC4wMCIgeT0iMTAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iIzhjMTY3MyIvPjxyZWN0IHg9IjMwLjAwIiB5PSIyMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjOGMxNjczIi8+PHJlY3QgeD0iODAuMDAiIHk9IjIwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSIxMzAuMDAiIHk9IjIwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSI0MC4wMCIgeT0iMzAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iIzhjMTY3MyIvPjxyZWN0IHg9IjcwLjAwIiB5PSIzMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmZmZmZmIi8+PHJlY3QgeD0iODAuMDAiIHk9IjMwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZmZmZmYiLz48cmVjdCB4PSI5MC4wMCIgeT0iMzAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmZmZmZiIvPjxyZWN0IHg9IjEyMC4wMCIgeT0iMzAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iIzhjMTY3MyIvPjxyZWN0IHg9IjUwLjAwIiB5PSI0MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjOGMxNjczIi8+PHJlY3QgeD0iNjAuMDAiIHk9IjQwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSI3MC4wMCIgeT0iNDAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmZmZmZiIvPjxyZWN0IHg9IjgwLjAwIiB5PSI0MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjMTIwYzMzIi8+PHJlY3QgeD0iOTAuMDAiIHk9IjQwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZmZmZmYiLz48cmVjdCB4PSIxMDAuMDAiIHk9IjQwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSIxMTAuMDAiIHk9IjQwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSI0MC4wMCIgeT0iNTAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iIzhjMTY3MyIvPjxyZWN0IHg9IjUwLjAwIiB5PSI1MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNjAuMDAiIHk9IjUwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSI3MC4wMCIgeT0iNTAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmZmZmZiIvPjxyZWN0IHg9IjgwLjAwIiB5PSI1MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmZmZmZmIi8+PHJlY3QgeD0iOTAuMDAiIHk9IjUwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZmZmZmYiLz48cmVjdCB4PSIxMDAuMDAiIHk9IjUwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSIxMTAuMDAiIHk9IjUwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSIxMjAuMDAiIHk9IjUwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSIzMC4wMCIgeT0iNjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iIzhjMTY3MyIvPjxyZWN0IHg9IjQwLjAwIiB5PSI2MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNTAuMDAiIHk9IjYwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSI2MC4wMCIgeT0iNjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmYzJlZiIvPjxyZWN0IHg9IjcwLjAwIiB5PSI2MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmZjMmVmIi8+PHJlY3QgeD0iODAuMDAiIHk9IjYwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZmMyZWYiLz48cmVjdCB4PSI5MC4wMCIgeT0iNjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmYzJlZiIvPjxyZWN0IHg9IjEwMC4wMCIgeT0iNjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmYzJlZiIvPjxyZWN0IHg9IjExMC4wMCIgeT0iNjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjEyMC4wMCIgeT0iNjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjEzMC4wMCIgeT0iNjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iIzhjMTY3MyIvPjxyZWN0IHg9IjIwLjAwIiB5PSI3MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjOGMxNjczIi8+PHJlY3QgeD0iMzAuMDAiIHk9IjcwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSI0MC4wMCIgeT0iNzAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjUwLjAwIiB5PSI3MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmZjMmVmIi8+PHJlY3QgeD0iNjAuMDAiIHk9IjcwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZmMyZWYiLz48cmVjdCB4PSI3MC4wMCIgeT0iNzAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjgwLjAwIiB5PSI3MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iOTAuMDAiIHk9IjcwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSIxMDAuMDAiIHk9IjcwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZmMyZWYiLz48cmVjdCB4PSIxMTAuMDAiIHk9IjcwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZmMyZWYiLz48cmVjdCB4PSIxMjAuMDAiIHk9IjcwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSIxMzAuMDAiIHk9IjcwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSIxNDAuMDAiIHk9IjcwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSIyMC4wMCIgeT0iODAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iIzhjMTY3MyIvPjxyZWN0IHg9IjMwLjAwIiB5PSI4MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNDAuMDAiIHk9IjgwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSI1MC4wMCIgeT0iODAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmZmZmZiIvPjxyZWN0IHg9IjYwLjAwIiB5PSI4MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmZmZmZmIi8+PHJlY3QgeD0iNzAuMDAiIHk9IjgwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSI4MC4wMCIgeT0iODAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjkwLjAwIiB5PSI4MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTAwLjAwIiB5PSI4MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmZmZmZmIi8+PHJlY3QgeD0iMTEwLjAwIiB5PSI4MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmZmZmZmIi8+PHJlY3QgeD0iMTIwLjAwIiB5PSI4MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTMwLjAwIiB5PSI4MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTQwLjAwIiB5PSI4MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjOGMxNjczIi8+PHJlY3QgeD0iMTAuMDAiIHk9IjkwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSIyMC4wMCIgeT0iOTAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjMwLjAwIiB5PSI5MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNDAuMDAiIHk9IjkwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSI1MC4wMCIgeT0iOTAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmZmZmZiIvPjxyZWN0IHg9IjYwLjAwIiB5PSI5MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjMTIwYzMzIi8+PHJlY3QgeD0iNzAuMDAiIHk9IjkwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSI4MC4wMCIgeT0iOTAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjkwLjAwIiB5PSI5MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTAwLjAwIiB5PSI5MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmZmZmZmIi8+PHJlY3QgeD0iMTEwLjAwIiB5PSI5MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjMTIwYzMzIi8+PHJlY3QgeD0iMTIwLjAwIiB5PSI5MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTMwLjAwIiB5PSI5MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTQwLjAwIiB5PSI5MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTUwLjAwIiB5PSI5MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjOGMxNjczIi8+PHJlY3QgeD0iMTAuMDAiIHk9IjEwMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjOGMxNjczIi8+PHJlY3QgeD0iMjAuMDAiIHk9IjEwMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMzAuMDAiIHk9IjEwMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNDAuMDAiIHk9IjEwMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNTAuMDAiIHk9IjEwMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmZmZmZmIi8+PHJlY3QgeD0iNjAuMDAiIHk9IjEwMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmZmZmZmIi8+PHJlY3QgeD0iNzAuMDAiIHk9IjEwMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iODAuMDAiIHk9IjEwMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iOTAuMDAiIHk9IjEwMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTAwLjAwIiB5PSIxMDAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmZmZmZiIvPjxyZWN0IHg9IjExMC4wMCIgeT0iMTAwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZmZmZmYiLz48cmVjdCB4PSIxMjAuMDAiIHk9IjEwMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTMwLjAwIiB5PSIxMDAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjE0MC4wMCIgeT0iMTAwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSIxNTAuMDAiIHk9IjEwMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjOGMxNjczIi8+PHJlY3QgeD0iMTAuMDAiIHk9IjExMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjOGMxNjczIi8+PHJlY3QgeD0iMjAuMDAiIHk9IjExMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMzAuMDAiIHk9IjExMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNDAuMDAiIHk9IjExMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNTAuMDAiIHk9IjExMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNjAuMDAiIHk9IjExMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNzAuMDAiIHk9IjExMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iODAuMDAiIHk9IjExMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iOTAuMDAiIHk9IjExMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTAwLjAwIiB5PSIxMTAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjExMC4wMCIgeT0iMTEwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSIxMjAuMDAiIHk9IjExMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTMwLjAwIiB5PSIxMTAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjE0MC4wMCIgeT0iMTEwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSIxNTAuMDAiIHk9IjExMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjOGMxNjczIi8+PHJlY3QgeD0iMTAuMDAiIHk9IjEyMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjOGMxNjczIi8+PHJlY3QgeD0iMjAuMDAiIHk9IjEyMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMzAuMDAiIHk9IjEyMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNDAuMDAiIHk9IjEyMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNTAuMDAiIHk9IjEyMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjMmIwZjJmIi8+PHJlY3QgeD0iNjAuMDAiIHk9IjEyMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjMmIwZjJmIi8+PHJlY3QgeD0iNzAuMDAiIHk9IjEyMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjMmIwZjJmIi8+PHJlY3QgeD0iODAuMDAiIHk9IjEyMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjMmIwZjJmIi8+PHJlY3QgeD0iOTAuMDAiIHk9IjEyMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjMmIwZjJmIi8+PHJlY3QgeD0iMTAwLjAwIiB5PSIxMjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iIzJiMGYyZiIvPjxyZWN0IHg9IjExMC4wMCIgeT0iMTIwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiMyYjBmMmYiLz48cmVjdCB4PSIxMjAuMDAiIHk9IjEyMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTMwLjAwIiB5PSIxMjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjE0MC4wMCIgeT0iMTIwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSIxNTAuMDAiIHk9IjEyMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjOGMxNjczIi8+PHJlY3QgeD0iMTAuMDAiIHk9IjEzMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjOGMxNjczIi8+PHJlY3QgeD0iMjAuMDAiIHk9IjEzMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMzAuMDAiIHk9IjEzMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNDAuMDAiIHk9IjEzMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNTAuMDAiIHk9IjEzMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjMmIwZjJmIi8+PHJlY3QgeD0iNjAuMDAiIHk9IjEzMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmZmZmZmIi8+PHJlY3QgeD0iNzAuMDAiIHk9IjEzMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iODAuMDAiIHk9IjEzMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iOTAuMDAiIHk9IjEzMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmZmZmZmIi8+PHJlY3QgeD0iMTAwLjAwIiB5PSIxMzAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjExMC4wMCIgeT0iMTMwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiMyYjBmMmYiLz48cmVjdCB4PSIxMjAuMDAiIHk9IjEzMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTMwLjAwIiB5PSIxMzAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjE0MC4wMCIgeT0iMTMwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSIxNTAuMDAiIHk9IjEzMC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjOGMxNjczIi8+PHJlY3QgeD0iMjAuMDAiIHk9IjE0MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjOGMxNjczIi8+PHJlY3QgeD0iMzAuMDAiIHk9IjE0MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNDAuMDAiIHk9IjE0MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNTAuMDAiIHk9IjE0MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iNjAuMDAiIHk9IjE0MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjMmIwZjJmIi8+PHJlY3QgeD0iNzAuMDAiIHk9IjE0MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjMmIwZjJmIi8+PHJlY3QgeD0iODAuMDAiIHk9IjE0MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjMmIwZjJmIi8+PHJlY3QgeD0iOTAuMDAiIHk9IjE0MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjMmIwZjJmIi8+PHJlY3QgeD0iMTAwLjAwIiB5PSIxNDAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iIzJiMGYyZiIvPjxyZWN0IHg9IjExMC4wMCIgeT0iMTQwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSIxMjAuMDAiIHk9IjE0MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTMwLjAwIiB5PSIxNDAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjE0MC4wMCIgeT0iMTQwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSIyMC4wMCIgeT0iMTUwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSIzMC4wMCIgeT0iMTUwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSI0MC4wMCIgeT0iMTUwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSI1MC4wMCIgeT0iMTUwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSI2MC4wMCIgeT0iMTUwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSI3MC4wMCIgeT0iMTUwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZmUxNGQiLz48cmVjdCB4PSI4MC4wMCIgeT0iMTUwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZmUxNGQiLz48cmVjdCB4PSI5MC4wMCIgeT0iMTUwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZmUxNGQiLz48cmVjdCB4PSIxMDAuMDAiIHk9IjE1MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTEwLjAwIiB5PSIxNTAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjEyMC4wMCIgeT0iMTUwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSIxMzAuMDAiIHk9IjE1MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTQwLjAwIiB5PSIxNTAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iIzhjMTY3MyIvPjxyZWN0IHg9IjMwLjAwIiB5PSIxNjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iIzhjMTY3MyIvPjxyZWN0IHg9IjQwLjAwIiB5PSIxNjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjUwLjAwIiB5PSIxNjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjYwLjAwIiB5PSIxNjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjcwLjAwIiB5PSIxNjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmZTE0ZCIvPjxyZWN0IHg9IjgwLjAwIiB5PSIxNjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmZTE0ZCIvPjxyZWN0IHg9IjkwLjAwIiB5PSIxNjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmZTE0ZCIvPjxyZWN0IHg9IjEwMC4wMCIgeT0iMTYwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSIxMTAuMDAiIHk9IjE2MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjZmY1YmQxIi8+PHJlY3QgeD0iMTIwLjAwIiB5PSIxNjAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iI2ZmNWJkMSIvPjxyZWN0IHg9IjEzMC4wMCIgeT0iMTYwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSI0MC4wMCIgeT0iMTcwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSI1MC4wMCIgeT0iMTcwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSI2MC4wMCIgeT0iMTcwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSI3MC4wMCIgeT0iMTcwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSI4MC4wMCIgeT0iMTcwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSI5MC4wMCIgeT0iMTcwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiNmZjViZDEiLz48cmVjdCB4PSIxMDAuMDAiIHk9IjE3MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjOGMxNjczIi8+PHJlY3QgeD0iMTEwLjAwIiB5PSIxNzAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iIzhjMTY3MyIvPjxyZWN0IHg9IjEyMC4wMCIgeT0iMTcwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSIzMC4wMCIgeT0iMTgwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSI0MC4wMCIgeT0iMTgwLjAwIiB3aWR0aD0iMTAuMDAiIGhlaWdodD0iMTAuMDAiIGZpbGw9IiM4YzE2NzMiLz48cmVjdCB4PSIxMjAuMDAiIHk9IjE4MC4wMCIgd2lkdGg9IjEwLjAwIiBoZWlnaHQ9IjEwLjAwIiBmaWxsPSIjOGMxNjczIi8+PHJlY3QgeD0iMTMwLjAwIiB5PSIxODAuMDAiIHdpZHRoPSIxMC4wMCIgaGVpZ2h0PSIxMC4wMCIgZmlsbD0iIzhjMTY3MyIvPjwvc3ZnPgo=" alt="" width="170" height="190">
         <h2 id="titulo-final" class="titulo-pantalla" tabindex="-1">¡Fin del partido!</h2>
         <p id="texto-final" class="texto-final"></p>
+        <p id="puntaje-final" class="puntaje-final" hidden></p>
         <div id="logros-final" class="logros-final" hidden>
           <h3>Logros nuevos</h3>
           <ul id="lista-logros-final"></ul>
@@ -2593,6 +2994,20 @@ kbd.tecla-defensa {
     </section>
   </main>
 
+  <!-- Pantalla completa en los menús (versión 3.7). Se ve en TODAS las pantallas
+       menos en la partida, que ya tiene su botón en la barra de arriba.
+       Se esconde si el navegador no la permite (como en iPhone). -->
+  <button type="button" id="boton-pantalla-menu" class="boton-icono boton-pantalla boton-pantalla-menu" aria-label="Pantalla completa" aria-pressed="false" title="Pantalla completa">
+  <!-- Icono pixelado: cuatro esquinas hacia afuera (agrandar) -->
+  <svg class="icono-agrandar" viewBox="0 0 10 10" width="26" height="26" aria-hidden="true" focusable="false">
+    <path d="M0 0h4v1H1v3H0zM6 0h4v4H9V1H6zM0 6h1v3h3v1H0zM9 6h1v4H6V9h3z"></path>
+  </svg>
+  <!-- Icono pixelado: cuatro esquinas hacia adentro (achicar) -->
+  <svg class="icono-achicar" viewBox="0 0 10 10" width="26" height="26" aria-hidden="true" focusable="false">
+    <path d="M3 0h1v4H0V3h3zM6 0h1v3h3v1H6zM0 6h4v4H3V7H0zM6 6h4v1H7v3H6z"></path>
+  </svg>
+  </button>
+
   <!-- Avisos para lectores de pantalla (no se ven en pantalla) -->
   <div id="aviso-gol" class="visualmente-oculto" aria-live="assertive" aria-atomic="true"></div>
   <div id="aviso" class="visualmente-oculto" aria-live="polite" aria-atomic="true"></div>
@@ -2602,7 +3017,7 @@ kbd.tecla-defensa {
 <script>
 'use strict';
 /* ==========================================================================
-   GALAXY GOL · js/script.js · versión 3.6
+   GALAXY GOL · js/script.js · versión 4.0
    Fútbol arcade 2D de alienígenas. Autor: David Santiago Sarmiento Salguero.
 
    Índice:
@@ -2653,6 +3068,11 @@ const CONTROL_MAX = 480;                         // más rápido que esto, el ba
 const FRICCION = 1.05;
 const VEL_MAX_BALON = 1100;
 const GOLES_PARA_GANAR = 5;
+// Velocidad progresiva (versión 3.8): cada 30 segundos de juego el balón va
+// un 4 % más rápido, hasta +24 %. Se suma a lo que ya sube con cada gol
+// ("aumentoPorGol" de cada nivel). El reloj solo corre con el balón en juego.
+// El tutorial no se acelera.
+const ACELERACION = { cada: 30, aumento: 0.04, maximo: 0.24 };
 const SEGUNDOS_MITAD = 8;
 const PASO = 1 / 120;                            // la física avanza en pasos fijos
 const ROLES = ['arquero', 'defensa', 'volante', 'delantero'];
@@ -2827,7 +3247,7 @@ const COLORES_EQUIPO = {
 // Perfiles por defecto. El tuyo se cambia en la pantalla "Tu perfil".
 const PERFIL_INICIAL = { nombre: '', equipo: '', color: 'celeste', capitan: 'cometa' };
 const PERFIL_ZORP = { nombre: 'Zorp', equipo: 'Zorp', color: 'rosado', capitan: 'zorp' };
-const PERFIL_J2 = { nombre: 'Jugador 2', equipo: '', color: 'rosado', capitan: 'zorp' };
+const PERFIL_J2 = { nombre: '', equipo: '', color: 'rosado', capitan: 'cuernos' };   // versión 3.9: el jugador 2 también escoge
 
 /* 2. TABLAS DE ANIMACIONES Y SONIDOS ====================================== */
 // Cada animación: cuántos cuadros tiene, a cuántos cuadros por segundo va y
@@ -2894,7 +3314,7 @@ const EFECTOS = {
   rebote: { grupo: 'Balón y jugadas', que: 'Rebote', cuando: 'El balón choca rápido con la banda, el fondo, un cráter o un alienígena.', capas: [{ f: 320, dur: 0.03, vol: 0.06 }] },
   poste: { grupo: 'Balón y jugadas', que: 'Balón en el poste', cuando: 'El balón pega en un palo del arco.', capas: [{ f: 1250, hasta: 900, dur: 0.14, onda: 'triangle', vol: 0.16 }] },
   atajada: { grupo: 'Balón y jugadas', que: 'Atajada', cuando: 'El arquero atrapa el balón.', capas: [{ f: 150, hasta: 90, dur: 0.12, vol: 0.22 }] },
-  cambio: { grupo: 'Balón y jugadas', que: 'Cambio de alienígena', cuando: 'Sin uso desde la versión 3.2 (el cambio de alienígena es automático). Se deja por si lo quieres usar.', capas: [{ f: 440, dur: 0.05, vol: 0.07 }] },
+  cambio: { grupo: 'Balón y jugadas', que: 'Cambio de alienígena', cuando: 'Aprietas Cambiar (H o L) y pasas a manejar a otro alienígena.', capas: [{ f: 440, dur: 0.05, vol: 0.07 }] },
   'no-valido': { grupo: 'Balón y jugadas', que: 'Acción no permitida', cuando: 'Sueltas Patear sin el balón cerca, o Derrapas mientras te levantas.', capas: [{ f: 140, dur: 0.06, vol: 0.06 }] },
   // Poderes
   capsula: { grupo: 'Poderes', que: 'Aparece una cápsula', cuando: 'Sale una cápsula de poder en la cancha.', capas: melodia([880, 1175, 1568], 0.05, { onda: 'triangle', vol: 0.1 }) },
@@ -2945,6 +3365,7 @@ const dom = {
   botonPausa: $('#boton-pausa'),
   botonSonido: $('#boton-sonido'),
   botonPantalla: $('#boton-pantalla'),
+  botonPantallaMenu: $('#boton-pantalla-menu'),   // el mismo, pero en los menús (versión 3.7)
   iconoSonido: $('#icono-sonido'),
   botonContinuar: $('#boton-continuar'),
   resumenPausa: $('#resumen-pausa'),
@@ -2956,6 +3377,12 @@ const dom = {
   listaLogrosFinal: $('#lista-logros-final'),
   listaLogros: $('#lista-logros'),
   contadorLogros: $('#contador-logros'),
+  listaMejores: $('#lista-mejores'),               // pantalla Récords (versión 3.8)
+  listaHistorial: $('#lista-historial'),
+  resumenRecords: $('#resumen-records'),
+  sinPartidos: $('#sin-partidos'),
+  botonReiniciarRecords: $('#boton-reiniciar-records'),
+  puntajeFinal: $('#puntaje-final'),
   tutorial: $('#tutorial'),
   tutorialPaso: $('#tutorial-paso'),
   tutorialTexto: $('#tutorial-texto'),
@@ -3045,6 +3472,9 @@ function distanciaASegmento(p, a, b) {
 const CLAVE_LOGROS = 'galaxyGol.logros';
 const CLAVE_SILENCIO = 'galaxyGol.silencio';
 const CLAVE_PERFIL = 'galaxyGol.perfil';
+const CLAVE_HISTORIAL = 'galaxyGol.historial';   // versión 3.8: partidos jugados (JSON)
+const CLAVE_PERFILES = 'galaxyGol.perfiles';     // versión 3.9: todos los perfiles guardados (JSON)
+const CLAVE_PERFIL_J2 = 'galaxyGol.perfilJ2';    // versión 3.9: último perfil del jugador 2
 
 const almacen = {
   leer(clave, porDefecto) {
@@ -3251,9 +3681,12 @@ async function alternarPantallaCompleta() {
 
 function pintarBotonPantalla() {
   const activa = Boolean(elementoEnPantallaCompleta());
-  dom.botonPantalla.classList.toggle('activa', activa);
-  dom.botonPantalla.setAttribute('aria-pressed', String(activa));
-  dom.botonPantalla.title = activa ? 'Salir de pantalla completa' : 'Pantalla completa';
+  // Los dos botones (el de la partida y el de los menús) muestran lo mismo
+  for (const boton of [dom.botonPantalla, dom.botonPantallaMenu]) {
+    boton.classList.toggle('activa', activa);
+    boton.setAttribute('aria-pressed', String(activa));
+    boton.title = activa ? 'Salir de pantalla completa' : 'Pantalla completa';
+  }
 }
 
 function pintarBotonSonido() {
@@ -3266,10 +3699,12 @@ const TITULOS = {
   'pantalla-inicio': 'Galaxy Gol',
   'pantalla-controles': 'Controles · Galaxy Gol',
   'pantalla-logros': 'Logros · Galaxy Gol',
+  'pantalla-records': 'Récords · Galaxy Gol',
   'pantalla-creditos': 'Créditos · Galaxy Gol',
   'pantalla-jugadores': '¿Cuántos jugadores? · Galaxy Gol',
   'pantalla-nivel': 'Elige el nivel · Galaxy Gol',
-  'pantalla-perfil': 'Tu perfil · Galaxy Gol',
+  'pantalla-perfil': 'Perfiles · Galaxy Gol',
+  'pantalla-equipo': 'Prepara tu equipo · Galaxy Gol',
   'pantalla-red': 'Jugar en línea · Galaxy Gol',
   'pantalla-partida': 'Partida · Galaxy Gol'
 };
@@ -3316,13 +3751,14 @@ document.addEventListener('click', (evento) => {
 
   if (datos.ir) {
     if (datos.ir === 'pantalla-logros') pintarLogros();
-    if (datos.ir === 'pantalla-perfil') abrirPerfil(pantallaVisible());
+    if (datos.ir === 'pantalla-records') pintarRecords();
+    if (datos.ir === 'pantalla-perfil') pintarPerfiles();
     if (datos.salirSala !== undefined) cerrarRed();
     sonido.tocar('menu');
     mostrarPantalla(datos.ir);
   } else if (datos.modo === 'red') {
     sonido.tocar('menu');
-    abrirSala();
+    abrirEquipos('red');   // versión 3.9: primero se prepara el equipo y luego la sala
   } else if (datos.modo) {
     juego.modo = datos.modo;
     sonido.tocar('menu');
@@ -3330,11 +3766,12 @@ document.addEventListener('click', (evento) => {
       mostrarPantalla('pantalla-nivel');
     } else {
       juego.nivel = 'normal';
-      empezarPartida();
+      abrirEquipos('2j');
     }
   } else if (datos.nivel) {
     juego.nivel = datos.nivel;
-    empezarPartida();
+    sonido.tocar('menu');
+    abrirEquipos('1j');
   } else if (datos.accionMenu === 'otra-vez' && juego.modo === 'red') {
     pedirRevancha();
   } else if (datos.accionMenu === 'otra-vez') {
@@ -3362,6 +3799,7 @@ dom.botonPantalla.addEventListener('click', async (evento) => {
   await alternarPantallaCompleta();
   if (evento.detail > 0 && !juego.pausado) dom.canvas.focus();
 });
+dom.botonPantallaMenu.addEventListener('click', () => alternarPantallaCompleta());
 for (const tipo of ['fullscreenchange', 'webkitfullscreenchange']) {
   document.addEventListener(tipo, () => {
     pintarBotonPantalla();
@@ -3422,7 +3860,7 @@ function pausar(desdeRed = false) {
   const [a, b] = juego.marcador;
   if (juego.modo === '1j') dom.resumenPausa.textContent = `Tú ${a} - ${b} Zorp · ${juego.tutorial ? 'Tutorial' : `Nivel ${juego.ajuste.nombre}`}`;
   else if (juego.modo === 'red') dom.resumenPausa.textContent = `${nombreVisible(0)} ${a} - ${b} ${nombreVisible(1)} · En línea${desdeRed ? ` · Pausó ${nombreJugador(1 - red.miEquipo())}` : ''}`;
-  else dom.resumenPausa.textContent = `Jugador 1 ${a} - ${b} Jugador 2`;
+  else dom.resumenPausa.textContent = `${nombreJugador(0)} ${a} - ${b} ${nombreJugador(1)}`;
   dom.partida.inert = true;
   dom.pausa.hidden = false;
   dom.botonContinuar.focus();
@@ -3453,21 +3891,27 @@ function alternarPausa() {
 //    (carga llena en 1 s; a los 1,25 s tira solo).
 // Versión 3.2: ya no hay tecla Cambiar. Siempre manejas al alienígena de tu
 // equipo más cercano al balón (ver cambioAutomatico, sección 12).
+// Versión 4.0: vuelve la tecla Cambiar. Las tres acciones del jugador 1 quedan
+// en fila (F G H), una por dedo, sin soltar nunca W A S D: F patea, G derrapa
+// y H cambia de alienígena. Las dos de defensa (derrapar y cambiar) van juntas.
+// El jugador 2 tiene el mismo orden al revés junto a las flechas: L cambia,
+// Ñ patea y el punto derrapa. Entre los dos bloques quedan libres J y K, para
+// que las manos no choquen jugando de a dos.
 const CONTROLES = [
   {
-    // Jugador 1: mano izquierda en W A S D; F patea y G derrapa
+    // Jugador 1: mano izquierda en W A S D; F patea, G derrapa y H cambia
     arriba: ['KeyW'], abajo: ['KeyS'], izquierda: ['KeyA'], derecha: ['KeyD'],
-    patear: ['KeyF'], derrapar: ['KeyG']
+    patear: ['KeyF'], derrapar: ['KeyG'], cambiar: ['KeyH']
   },
   {
-    // Jugador 2: mano derecha en las flechas; Ñ patea y el punto derrapa
+    // Jugador 2: mano derecha en las flechas; L cambia, Ñ patea y el punto derrapa
     // (Semicolon es la Ñ en teclado latinoamericano)
     arriba: ['ArrowUp'], abajo: ['ArrowDown'], izquierda: ['ArrowLeft'], derecha: ['ArrowRight'],
-    patear: ['Semicolon'], derrapar: ['Period']
+    patear: ['Semicolon'], derrapar: ['Period'], cambiar: ['KeyL']
   }
 ];
-const BOTONES = ['patear', 'derrapar'];             // lo que se aprieta
-const ACCIONES = ['pasar', 'tirar', 'derrapar'];     // lo que hace el alienígena
+const BOTONES = ['patear', 'derrapar', 'cambiar'];             // lo que se aprieta
+const ACCIONES = ['pasar', 'tirar', 'derrapar', 'cambiar'];     // lo que hace el equipo
 const CARGA = { toque: 0.18, llena: 1, maxima: 1.25 };   // segundos
 const cargas = [null, null];   // tiro cargándose de cada jugador de este aparato
 const teclas = new Set();
@@ -3765,10 +4209,15 @@ function accion(jugador, tipo, fuerza = null) {
   if (juego.estado !== 'jugando' || juego.pausado) return;
   if (jugador === 1 && juego.modo === '1j') return;
   const equipo = juego.equipos[jugador];
+  // Cambiar sirve aunque tu alienígena esté en el piso
+  if (tipo === 'cambiar') {
+    if (!cambiarManual(equipo)) sonido.tocar('no-valido');
+    return;
+  }
   const alien = equipo.aliens[equipo.controlado];
   let hecho = false;
   if (alien.estado !== 'normal') hecho = false;
-  else if (tipo === 'pasar') hecho = pasar(alien);
+  else if (tipo === 'pasar') hecho = pasar(alien, entrada(jugador));   // el pase va hacia donde apuntas
   else if (tipo === 'tirar') hecho = tirar(alien, entrada(jugador), fuerza);
   else if (tipo === 'derrapar') {
     const m = entrada(jugador);
@@ -3837,6 +4286,7 @@ function crearEquipo(indice) {
     vaPorCapsula: false,
     ultimoPase: -10,
     esperaCambio: 0,                           // (persona) pausa corta entre cambios automáticos
+    ultimoCambioManual: -10,                   // (persona) cuándo apretó Cambiar (en segundos)
     aliens: ROLES.map((rol, numero) => ({
       equipo: indice,
       numero,
@@ -3872,6 +4322,8 @@ function nuevaPartida() {
   juego.particulas = [];
   juego.primerSaque = true;
   juego.reloj = 0;
+  juego.ritmoAvisado = 0;          // velocidad progresiva: último aumento anunciado
+  juego.historialGuardado = false; // para guardar el partido una sola vez
   juego.capsula = null;
   juego.proximaCapsula = PODER.capsula.primera;
   juego.ultimoPoder = '';
@@ -4005,6 +4457,14 @@ function actualizar(dt) {
 
 function actualizarJuego(dt) {
   juego.reloj += dt;
+  // Velocidad progresiva: avisa cada vez que el balón sube de velocidad
+  const ritmo = nivelRitmo();
+  if (ritmo > juego.ritmoAvisado) {
+    juego.ritmoAvisado = ritmo;
+    const porcentaje = Math.round((multiplicador() - 1) * 100);
+    ponerMensaje('¡El balón va más rápido!', true, 1.6);
+    anunciar(`El balón va más rápido: ${porcentaje} % más que al empezar.`);
+  }
   juego.tiempoDesdeSaque += dt;
   actualizarPoderes(dt);
   for (const eq of juego.equipos) actualizarEquipo(eq, dt);
@@ -4171,9 +4631,18 @@ function chocarConCrateres(a) {
 /* 12. BALÓN: POSESIÓN, PASES, TIROS Y DERRAPES ============================ */
 const esManejado = (a) => juego.equipos[a.equipo].humano && juego.equipos[a.equipo].controlado === a.numero;
 
-// El balón va un poco más rápido después de cada gol, según el nivel
+// Velocidad progresiva: cuántos aumentos por tiempo lleva la partida (0 a 6)
+function nivelRitmo() {
+  if (juego.tutorial) return 0;
+  const tope = Math.round(ACELERACION.maximo / ACELERACION.aumento);
+  return Math.min(Math.floor(juego.reloj / ACELERACION.cada), tope);
+}
+
+// El balón va un poco más rápido después de cada gol (según el nivel)
+// y cada 30 segundos de juego (velocidad progresiva, versión 3.8)
 function multiplicador() {
-  return 1 + (juego.marcador[0] + juego.marcador[1]) * juego.ajuste.aumentoPorGol;
+  return 1 + (juego.marcador[0] + juego.marcador[1]) * juego.ajuste.aumentoPorGol
+           + nivelRitmo() * ACELERACION.aumento;
 }
 
 function moverBalon(dt) {
@@ -4413,14 +4882,33 @@ function puedeTocar(a) {
   return b.dueno === a || (!b.dueno && a.estado === 'normal' && distancia(a, b) < ALCANCE_TOQUE);
 }
 
-// Elige al compañero más adelantado o más libre
-function elegirCompanero(a) {
+// ---- Pase dirigido (versión 4.0) ----
+//  · Si aprietas una dirección, el pase va al compañero que esté hacia ese lado
+//    (dentro de un cono de unos 74°, 37° a cada lado). Si hay varios, el mejor.
+//  · Si no aprietas nada, el juego elige al más adelantado o más libre (como antes).
+//  · Si hacia ese lado no hay nadie, el balón sale al espacio en esa dirección
+//    y corre a buscarlo el compañero que esté más cerca de donde va a caer.
+const PASE = {
+  cono: 0.8,        // coseno del ángulo máximo (0,8 ≈ 37° a cada lado)
+  apuntado: 0.3,    // desde cuánto se cuenta que aprietas una dirección
+  espacio: 190      // qué tan lejos va un pase al espacio (unidades de cancha)
+};
+
+// Elige al compañero más adelantado o más libre. Con "direccion", solo los que
+// están hacia ese lado, y ganan los mejor alineados.
+function elegirCompanero(a, direccion = null) {
   const eq = juego.equipos[a.equipo];
   const rival = juego.equipos[1 - a.equipo];
   let mejor = null;
   let mejorPuntaje = -Infinity;
   for (const c of eq.aliens) {
     if (c === a || c.estado === 'aturdido') continue;
+    let alineado = 0;
+    if (direccion) {
+      const hacia = normalizar(c.x - a.x, c.y - a.y);
+      alineado = hacia.x * direccion.x + hacia.y * direccion.y;
+      if (alineado < PASE.cono) continue;   // no está hacia donde apuntas
+    }
     const avance = ((c.x - a.x) * eq.sentido) / 400;
     let libre = Infinity;
     for (const r of rival.aliens) libre = Math.min(libre, distancia(c, r));
@@ -4432,7 +4920,7 @@ function elegirCompanero(a) {
     for (const cr of juego.crateres) {
       if (distanciaASegmento(cr, a, c) < radioCrater(cr)) bloqueo += 0.4;
     }
-    let puntaje = avance * 0.55 + libre * 0.45 - bloqueo;
+    let puntaje = avance * 0.55 + libre * 0.45 - bloqueo + alineado * 2;
     if (c.rol === 'arquero') puntaje -= 0.9;
     if (distancia(a, c) < 70) puntaje -= 0.5;
     if (puntaje > mejorPuntaje) {
@@ -4443,20 +4931,48 @@ function elegirCompanero(a) {
   return mejor;
 }
 
-function pasar(a) {
+// Decide a quién va el pase y a qué punto, sin patear todavía.
+// Lo usan pasar() y la marca que se dibuja antes de soltar el pase.
+// Devuelve { destino, meta, alEspacio } o null si no hay a quién pasarle.
+function planDePase(a, apunte = null) {
+  const b = juego.balon;
+  const eq = juego.equipos[a.equipo];
+  const apuntando = apunte && Math.hypot(apunte.x, apunte.y) > PASE.apuntado;
+  const direccion = apuntando ? normalizar(apunte.x, apunte.y) : null;
+  const destino = elegirCompanero(a, direccion);
+  if (destino) {
+    // Se apunta un poco adelante del compañero si va corriendo
+    const tiempo = distancia(b, destino) / 420;
+    const meta = {
+      x: limitar(destino.x + destino.vx * tiempo * 0.7, RADIO_ALIEN, CANCHA.largo - RADIO_ALIEN),
+      y: limitar(destino.y + destino.vy * tiempo * 0.7, RADIO_ALIEN, CANCHA.ancho - RADIO_ALIEN)
+    };
+    return { destino, meta, alEspacio: false };
+  }
+  if (!direccion) return null;
+  // Nadie hacia ese lado: pase al espacio
+  const meta = {
+    x: limitar(b.x + direccion.x * PASE.espacio, RADIO_ALIEN, CANCHA.largo - RADIO_ALIEN),
+    y: limitar(b.y + direccion.y * PASE.espacio, RADIO_ALIEN, CANCHA.ancho - RADIO_ALIEN)
+  };
+  let receptor = null;
+  for (const c of eq.aliens) {
+    if (c === a || c.rol === 'arquero' || c.estado === 'aturdido') continue;
+    if (!receptor || distancia(c, meta) < distancia(receptor, meta)) receptor = c;
+  }
+  return { destino: receptor, meta, alEspacio: true };
+}
+
+// "apunte": hacia dónde aprieta la persona (la máquina pasa sin apunte)
+function pasar(a, apunte = null) {
   if (!puedeTocar(a)) return false;
   const b = juego.balon;
   const eq = juego.equipos[a.equipo];
-  const destino = elegirCompanero(a);
-  if (!destino) return false;
+  const plan = planDePase(a, apunte);
+  if (!plan) return false;
+  const { destino, meta } = plan;
   if (b.dueno !== a) registrarToque(a);
 
-  // Se apunta un poco adelante del compañero si va corriendo
-  const tiempo = distancia(b, destino) / 420;
-  const meta = {
-    x: limitar(destino.x + destino.vx * tiempo * 0.7, RADIO_ALIEN, CANCHA.largo - RADIO_ALIEN),
-    y: limitar(destino.y + destino.vy * tiempo * 0.7, RADIO_ALIEN, CANCHA.ancho - RADIO_ALIEN)
-  };
   const dir = normalizar(meta.x - b.x, meta.y - b.y);
   const velocidad = limitar(dir.l * FRICCION + 210 * multiplicador(), 260, 900);
   soltarBalon(a, dir.x * velocidad, dir.y * velocidad);
@@ -4465,8 +4981,10 @@ function pasar(a) {
   a.patada = 0.18;
   juego.pase = { equipo: a.equipo, desde: a, hacia: destino, tiempo: 0 };
   eq.ultimoPase = juego.reloj;
-  eq.activo = destino.numero;
-  if (eq.humano) eq.controlado = destino.numero;   // el control pasa al que recibe
+  if (destino) {
+    eq.activo = destino.numero;
+    if (eq.humano) eq.controlado = destino.numero;   // el control pasa al que recibe
+  }
   sonido.tocar('pase');
   return true;
 }
@@ -4617,9 +5135,6 @@ function perderBalonEnBaba(a, dt) {
   }
 }
 
-// Cambia al compañero más cercano al balón. Si llevabas el balón, tu compañero
-// se queda con él y lo juega solo (puede pasártelo). El arquero solo se elige
-// cuando el balón está cerca de su área.
 // Cambio automático (versión 3.2): cada persona maneja siempre al alienígena de
 // su equipo más cercano al balón. El arquero lo maneja siempre la máquina.
 //  · Si tu equipo tiene el balón, manejas al que lo lleva.
@@ -4627,7 +5142,45 @@ function perderBalonEnBaba(a, dt) {
 //  · Para que no salte de un lado a otro, el nuevo debe estar bastante más cerca
 //    (45 unidades) y entre un cambio y otro pasan al menos 0,35 s.
 //  · No cambia a mitad de un derrape.
-const CAMBIO = { ventaja: 45, espera: 0.35, anticipo: 0.2, castigoCaido: 90 };
+// Cambio manual (versión 4.0): con H (o L) eliges tú. El cambio automático
+// respeta tu elección durante 3 segundos y luego vuelve a ayudarte.
+const CAMBIO = { ventaja: 45, espera: 0.35, anticipo: 0.2, castigoCaido: 90, manual: 3, seguido: 1 };
+
+// Qué tan lejos está un alienígena del balón (mirando un poquito adelante,
+// hacia donde va el balón o la nave que lo lleva). Los del piso cuentan más lejos.
+function medidorDeLejania() {
+  const b = juego.balon;
+  const objetivo = juego.nave && juego.nave.conBalon
+    ? juego.nave
+    : { x: b.x + b.vx * CAMBIO.anticipo, y: b.y + b.vy * CAMBIO.anticipo };
+  return (a) => distancia(a, objetivo) + (a.estado === 'normal' ? 0 : CAMBIO.castigoCaido);
+}
+
+// Tecla Cambiar. El primer toque salta al compañero más cercano al balón (sin
+// contarte a ti); si vuelves a tocar antes de 1 s, sigue con el siguiente en
+// orden de cercanía, así puedes llegar a cualquiera de los tres.
+// No hace nada si tu equipo lleva el balón (ya manejas al que lo tiene).
+function cambiarManual(eq) {
+  if (!eq.humano) return false;
+  const b = juego.balon;
+  if (b.dueno && b.dueno.equipo === eq.indice && b.dueno.rol !== 'arquero') return false;
+  const actual = eq.aliens[eq.controlado];
+  const lejania = medidorDeLejania();
+  const orden = eq.aliens.filter((c) => c.rol !== 'arquero').sort((m, n) => lejania(m) - lejania(n));
+  const ahora = performance.now() / 1000;
+  let nuevo;
+  if (ahora - eq.ultimoCambioManual < CAMBIO.seguido && orden.includes(actual)) {
+    nuevo = orden[(orden.indexOf(actual) + 1) % orden.length];
+  } else {
+    nuevo = orden.find((c) => c !== actual);
+  }
+  if (!nuevo || nuevo === actual) return false;
+  eq.controlado = nuevo.numero;
+  eq.esperaCambio = CAMBIO.manual;     // el automático espera un rato
+  eq.ultimoCambioManual = ahora;
+  sonido.tocar('cambio');
+  return true;
+}
 
 function cambioAutomatico(eq, dt) {
   if (!eq.humano) return;
@@ -4642,12 +5195,7 @@ function cambioAutomatico(eq, dt) {
   if (juego.pase && juego.pase.equipo === eq.indice && actual.rol !== 'arquero') return;
   if (actual.estado === 'derrapando') return;
 
-  // Se mira un poquito adelante, hacia donde va el balón (o la nave que lo lleva)
-  const objetivo = juego.nave && juego.nave.conBalon
-    ? juego.nave
-    : { x: b.x + b.vx * CAMBIO.anticipo, y: b.y + b.vy * CAMBIO.anticipo };
-  // Los que están en el piso cuentan como si estuvieran más lejos
-  const lejania = (a) => distancia(a, objetivo) + (a.estado === 'normal' ? 0 : CAMBIO.castigoCaido);
+  const lejania = medidorDeLejania();
 
   let mejor = null;
   for (const c of eq.aliens) {
@@ -5299,9 +5847,9 @@ function iaPosicion(a, eq, dt) {
 
 /* 15. TUTORIAL ============================================================ */
 const PASOS_TUTORIAL = [
-  { id: 'mover', texto: 'Muévete con W A S D o con el joystick. Siempre manejas al alienígena de tu equipo más cercano al balón: el aro brillante te muestra cuál es.' },
+  { id: 'mover', texto: 'Muévete con W A S D o con el joystick. El aro brillante marca al alienígena que manejas: el juego te cambia solo al más cercano al balón, y con H eliges tú.' },
   { id: 'tomar', texto: 'Ve hasta el balón y tócalo: se queda pegado a tu pie.' },
-  { id: 'pase', texto: 'Pásale el balón a un compañero: toca F (o el botón Patear) una vez, rapidito. El control salta al que recibe.' },
+  { id: 'pase', texto: 'Pásale el balón a un compañero: apunta hacia él con la dirección y toca F (o Patear) una vez. El aro punteado te muestra a quién le llega.' },
   { id: 'gol', texto: 'Lleva el balón al arco de Zorp, mantén apretado F (o Patear) y suelta: más tiempo = tiro más fuerte. Para elegir palo, mantén la dirección hacia ese lado.' },
   { id: 'robo', texto: 'Zorp tiene el balón. Ponte delante de él y derrapa con G o con el botón Derrapar.' },
   { id: 'poder', texto: 'Toca la cápsula de poder. Los asteroides dejan huecos: rodéalos. La cancha se arregla sola.' }
@@ -5524,6 +6072,8 @@ function terminarPartida() {
 // Pantalla final. "conSonido" es falso en el invitado (el sonido le llega por internet).
 function pintarFinal(ganador, conSonido = true) {
   juego.estado = 'final';
+  const partidos = guardarEnHistorial(ganador);   // historial y récords (versiones 3.8 y 3.9)
+  pintarPuntajeFinal(partidos);
   const [a, b] = juego.marcador;
   const unJugador = juego.modo === '1j';
   dom.botonOtraVez.hidden = false;
@@ -5541,10 +6091,10 @@ function pintarFinal(ganador, conSonido = true) {
     dom.imagenFinal.src = ganador === 0 ? IMAGENES.zorpTriste : IMAGENES.zorp;
     dom.imagenFinal.alt = ganador === 0 ? 'Zorp, triste por perder' : 'Zorp, feliz por ganar';
   } else {
-    dom.tituloFinal.textContent = `¡Gana el jugador ${ganador + 1}!`;
-    dom.textoFinal.textContent = `Jugador 1 ${a} - ${b} Jugador 2.`;
+    dom.tituloFinal.textContent = `¡Ganó ${nombreJugador(ganador)}!`;
+    dom.textoFinal.textContent = `${nombreJugador(0)} ${a} - ${b} ${nombreJugador(1)}.`;
     dom.imagenFinal.src = ganador === 0 ? IMAGENES.cometa : IMAGENES.zorp;
-    dom.imagenFinal.alt = ganador === 0 ? 'Capitán celeste del jugador 1' : 'Zorp, capitán rosado del jugador 2';
+    dom.imagenFinal.alt = `Alienígena del equipo de ${nombreJugador(ganador)} celebrando`;
   }
   dom.botonOtraVez.textContent = juego.modo === 'red' ? 'Revancha' : 'Jugar otra vez';
   if (conSonido) sonido.tocar((unJugador || juego.modo === 'red') && ganador === 1 ? 'derrota' : 'victoria');
@@ -5559,6 +6109,166 @@ function pintarFinal(ganador, conSonido = true) {
   dom.notificaciones.replaceChildren();
   mostrarFinal();
 }
+
+// ---- Historial de partidos y récords (versiones 3.8 y 3.9) ----
+// Cada partido terminado se guarda en localStorage (clave galaxyGol.historial)
+// como JSON. Puntaje = 100 por gol a favor − 50 por gol en contra + bono por ganar.
+// El tutorial no se guarda. En línea cada aparato guarda su propio partido.
+// Versión 3.9: con 2 jugadores se guarda a los dos (cada uno con su puntaje),
+// y "Mejores puntajes" muestra a cada jugador una sola vez, con su mayor puntaje.
+const BONO_GANAR = { facil: 300, normal: 600, dificil: 1000, '2j': 500, red: 500 };
+const MAX_HISTORIAL = 100;
+
+// ¿Es el mismo nombre? (sin importar mayúsculas ni espacios de más)
+const mismoNombre = (a, b) => String(a ?? '').trim().toLowerCase() === String(b ?? '').trim().toLowerCase();
+const NOMBRE_MODO = { '1j': 'contra Zorp', '2j': '2 jugadores', red: 'en línea' };
+
+function leerHistorial() {
+  const lista = almacen.leer(CLAVE_HISTORIAL, []);
+  if (!Array.isArray(lista)) return [];
+  return lista.filter((p) => p && typeof p.puntaje === 'number' && Array.isArray(p.marcador));
+}
+
+// Guarda el partido y devuelve la lista de lo guardado (1 o 2 registros)
+function guardarEnHistorial(ganador) {
+  if (juego.tutorial || juego.historialGuardado) return [];
+  juego.historialGuardado = true;
+  // De quién es el partido: 1 jugador = tú; en línea = tu equipo;
+  // 2 jugadores = los dos (primero el que ganó)
+  const lados = juego.modo === '2j' ? [ganador, 1 - ganador] : [juego.modo === 'red' ? red.miEquipo() : 0];
+  const claveBono = juego.modo === '1j' ? juego.nivel : juego.modo;
+  const anteriores = leerHistorial();
+  const mejorDeTodos = Math.max(0, ...anteriores.map((p) => p.puntaje));
+  const fecha = Date.now();
+  const nuevos = lados.map((mio, i) => {
+    const rival = 1 - mio;
+    const favor = juego.marcador[mio];
+    const contra = juego.marcador[rival];
+    const gano = ganador === mio;
+    const partido = {
+      fecha,
+      modo: juego.modo,
+      nivel: juego.modo === '1j' ? juego.nivel : null,
+      jugador: nombreJugador(mio),
+      rival: juego.modo === '1j' ? 'Zorp' : nombreJugador(rival),
+      marcador: [favor, contra],
+      gano,
+      puntaje: Math.max(0, favor * 100 - contra * 50 + (gano ? BONO_GANAR[claveBono] || 0 : 0)),
+      segundos: Math.round(juego.reloj)
+    };
+    // El mismo partido visto por el otro jugador: cuenta en su récord, pero no se repite en "Últimos partidos"
+    if (i > 0) partido.espejo = true;
+    const suyos = anteriores.filter((p) => mismoNombre(p.jugador, partido.jugador));
+    const mejorSuyo = Math.max(0, ...suyos.map((p) => p.puntaje));
+    partido.record = partido.puntaje > 0 && partido.puntaje > mejorDeTodos;
+    partido.recordPersonal = !partido.record && suyos.length > 0 && partido.puntaje > mejorSuyo;
+    return partido;
+  });
+  almacen.guardar(CLAVE_HISTORIAL, [...nuevos, ...anteriores].slice(0, MAX_HISTORIAL));
+  return nuevos;
+}
+
+function pintarPuntajeFinal(partidos) {
+  if (!dom.puntajeFinal) return;
+  dom.puntajeFinal.hidden = partidos.length === 0;
+  dom.puntajeFinal.textContent = partidos.map((p) => `${p.jugador}: ${p.puntaje} puntos` +
+    (p.record ? ' · ¡Nuevo récord!' : p.recordPersonal ? ' · ¡Récord personal!' : '')).join('   |   ');
+}
+
+// Junta los partidos por jugador: mayor puntaje, partidos y ganados (versión 3.9)
+function rankingPorJugador(lista) {
+  const porNombre = new Map();
+  for (const p of lista) {
+    const clave = String(p.jugador).trim().toLowerCase();
+    const fila = porNombre.get(clave) || { nombre: p.jugador, mejor: 0, partidos: 0, ganados: 0 };
+    fila.partidos += 1;
+    if (p.gano) fila.ganados += 1;
+    fila.mejor = Math.max(fila.mejor, p.puntaje);
+    porNombre.set(clave, fila);
+  }
+  return [...porNombre.values()].sort((a, b) => b.mejor - a.mejor || b.ganados - a.ganados);
+}
+
+// Mayor puntaje de una persona (para la pantalla "Perfiles")
+function datosDeJugador(nombre, lista = leerHistorial()) {
+  return rankingPorJugador(lista.filter((p) => mismoNombre(p.jugador, nombre)))[0] || null;
+}
+
+// Texto de un partido para las listas (nombres como texto, nunca como HTML)
+function textoPartido(p) {
+  const fecha = new Date(p.fecha).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' });
+  const nivel = p.nivel && NIVELES[p.nivel] ? ` (${NIVELES[p.nivel].nombre.toLowerCase()})` : '';
+  return `${p.jugador} ${p.marcador[0]} - ${p.marcador[1]} ${p.rival} · ${NOMBRE_MODO[p.modo] || ''}${nivel} · ${fecha}`;
+}
+
+function filaRecord(p, izquierda) {
+  const item = document.createElement('li');
+  item.className = p.gano ? 'record ganado' : 'record';
+  const marca = document.createElement('span');
+  marca.className = 'record-marca';
+  marca.textContent = izquierda;
+  const texto = document.createElement('span');
+  texto.className = 'record-texto';
+  texto.textContent = textoPartido(p);
+  const puntos = document.createElement('span');
+  puntos.className = 'record-puntos';
+  puntos.textContent = `${p.puntaje} pts`;
+  item.append(marca, texto, puntos);
+  return item;
+}
+
+// Una fila del ranking: medalla o puesto, nombre, partidos y mayor puntaje
+function filaRanking(fila, puesto) {
+  const item = document.createElement('li');
+  item.className = puesto < 3 ? 'record ganado' : 'record';
+  const marca = document.createElement('span');
+  marca.className = 'record-marca';
+  marca.textContent = ['🥇', '🥈', '🥉'][puesto] || `${puesto + 1}.`;
+  const texto = document.createElement('span');
+  texto.className = 'record-texto';
+  const nombre = document.createElement('strong');
+  nombre.textContent = fila.nombre;
+  texto.append(nombre, ` · ${fila.partidos} ${fila.partidos === 1 ? 'partido' : 'partidos'} · ${fila.ganados} ${fila.ganados === 1 ? 'ganado' : 'ganados'}`);
+  const puntos = document.createElement('span');
+  puntos.className = 'record-puntos';
+  puntos.textContent = `${fila.mejor} pts`;
+  item.append(marca, texto, puntos);
+  return item;
+}
+
+// Pinta la pantalla "Récords": ranking por jugador, últimos partidos y resumen
+function pintarRecords() {
+  const lista = leerHistorial();
+  const ranking = rankingPorJugador(lista).slice(0, 10);
+  const partidos = lista.filter((p) => !p.espejo);
+  dom.listaMejores.replaceChildren(...ranking.map((fila, i) => filaRanking(fila, i)));
+  dom.listaHistorial.replaceChildren(...partidos.slice(0, 10).map((p) => filaRecord(p, p.gano ? 'Ganó' : 'Perdió')));
+  dom.resumenRecords.textContent = lista.length
+    ? `Partidos: ${partidos.length} · Jugadores: ${rankingPorJugador(lista).length} · Mejor puntaje: ${ranking[0].mejor} (${ranking[0].nombre})`
+    : '';
+  dom.sinPartidos.hidden = lista.length > 0;
+  dom.listaMejores.hidden = lista.length === 0;
+  dom.listaHistorial.hidden = lista.length === 0;
+}
+
+// Reiniciar estadísticas: hay que tocar dos veces para no borrar por error
+let confirmarReinicio = 0;
+dom.botonReiniciarRecords.addEventListener('click', () => {
+  if (!confirmarReinicio) {
+    dom.botonReiniciarRecords.textContent = '¿Seguro? Toca otra vez para borrar';
+    confirmarReinicio = window.setTimeout(() => {
+      confirmarReinicio = 0;
+      dom.botonReiniciarRecords.textContent = 'Reiniciar estadísticas';
+    }, 3000);
+    return;
+  }
+  window.clearTimeout(confirmarReinicio);
+  confirmarReinicio = 0;
+  almacen.guardar(CLAVE_HISTORIAL, []);
+  dom.botonReiniciarRecords.textContent = 'Reiniciar estadísticas';
+  pintarRecords();
+  anunciar('Estadísticas reiniciadas.', false, true);
+});
 
 function mostrarFinal() {
   teclas.clear();
@@ -5829,6 +6539,7 @@ function dibujar() {
   lista.sort((m, n) => m.p.y - n.p.y);
   for (const item of lista) dibujarSombra(item.p, RADIO_ALIEN, 0.95);
   for (const item of lista) if (esManejado(item.a)) dibujarAro(item);
+  dibujarPlanesDePase();
   dibujarBabosa();
   const pb = aPantalla(juego.balon.x, juego.balon.y);
   const conNave = juego.nave && juego.nave.conBalon;
@@ -6023,6 +6734,61 @@ function dibujarAro({ a, p }) {
   ctx.shadowBlur = 12 * e;
   ctx.beginPath();
   ctx.ellipse(p.x, p.y + RADIO_ALIEN * 0.85 * e, RADIO_ALIEN * 1.35 * e, RADIO_ALIEN * 0.55 * e, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+// ---- Marca del pase (versión 4.0) ----
+// Mientras llevas el balón, un aro punteado que gira marca al compañero que
+// recibiría el pase si tocas Patear ahora. Si el pase va al espacio, se ve
+// una mira en el punto adonde va el balón. Mientras cargas un tiro no se ve.
+function dibujarPlanesDePase() {
+  if (juego.estado !== 'jugando' || juego.pausado) return;
+  const locales = juego.modo === '2j' ? [0, 1] : [0];
+  for (const jugador of locales) {
+    const indice = juego.modo === 'red' ? red.miEquipo() : jugador;
+    const eq = juego.equipos[indice];
+    if (!eq || !eq.humano) continue;
+    const a = eq.aliens[eq.controlado];
+    if (juego.balon.dueno !== a || (nivelCarga(jugador) ?? 0) > 0) continue;
+    const plan = planDePase(a, entrada(jugador));
+    if (!plan) continue;
+    if (plan.alEspacio) dibujarMira(aPantalla(plan.meta.x, plan.meta.y), indice);
+    else dibujarAroPase(aPantalla(plan.destino.x, plan.destino.y), indice);
+  }
+}
+
+function dibujarAroPase(p, equipo) {
+  const e = vista.escala;
+  ctx.save();
+  ctx.strokeStyle = colorDe(equipo, 'claro');
+  ctx.lineWidth = Math.max(2, 2.5 * e);
+  ctx.setLineDash([6 * e, 5 * e]);
+  ctx.lineDashOffset = reducirMovimiento ? 0 : -performance.now() / 40;
+  ctx.globalAlpha = 0.9;
+  ctx.beginPath();
+  ctx.ellipse(p.x, p.y + RADIO_ALIEN * 0.85 * e, RADIO_ALIEN * 1.6 * e, RADIO_ALIEN * 0.7 * e, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function dibujarMira(p, equipo) {
+  const e = vista.escala;
+  const r = 9 * e;
+  ctx.save();
+  ctx.strokeStyle = colorDe(equipo, 'claro');
+  ctx.lineWidth = Math.max(1.5, 2 * e);
+  ctx.globalAlpha = 0.85;
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+  ctx.moveTo(p.x - r * 1.6, p.y);
+  ctx.lineTo(p.x - r * 0.5, p.y);
+  ctx.moveTo(p.x + r * 0.5, p.y);
+  ctx.lineTo(p.x + r * 1.6, p.y);
+  ctx.moveTo(p.x, p.y - r * 1.6);
+  ctx.lineTo(p.x, p.y - r * 0.5);
+  ctx.moveTo(p.x, p.y + r * 0.5);
+  ctx.lineTo(p.x, p.y + r * 1.6);
   ctx.stroke();
   ctx.restore();
 }
@@ -6430,7 +7196,41 @@ function limpiarPerfil(datos) {
   };
 }
 
-let perfil = limpiarPerfil(almacen.leer(CLAVE_PERFIL, PERFIL_INICIAL));
+let perfil = limpiarPerfil(almacen.leer(CLAVE_PERFIL, PERFIL_INICIAL));      // jugador 1 (o tú)
+let perfilJ2 = limpiarPerfil(almacen.leer(CLAVE_PERFIL_J2, PERFIL_J2));      // jugador 2 (versión 3.9)
+
+// ---- Lista de perfiles guardados (versión 3.9) ----
+// Cada persona que juega queda guardada (nombre, equipo, color y capitán).
+// El más reciente va primero. Se busca por nombre sin importar mayúsculas.
+const MAX_PERFILES = 20;
+
+function leerPerfiles() {
+  const lista = almacen.leer(CLAVE_PERFILES, null);
+  if (Array.isArray(lista)) return lista.map(limpiarPerfil).filter((p) => p.nombre);
+  // Primera vez con la versión 3.9: se pasa el perfil que ya existía a la lista
+  return perfil.nombre ? [perfil] : [];
+}
+
+// Guarda (o actualiza) un perfil. "nombreViejo" sirve para cuando le cambian el nombre.
+function guardarPerfilEnLista(p, nombreViejo = p.nombre) {
+  if (!p.nombre) return;
+  const resto = leerPerfiles().filter((x) => !mismoNombre(x.nombre, p.nombre) && !mismoNombre(x.nombre, nombreViejo));
+  almacen.guardar(CLAVE_PERFILES, [p, ...resto].slice(0, MAX_PERFILES));
+}
+
+function borrarPerfil(nombre) {
+  almacen.guardar(CLAVE_PERFILES, leerPerfiles().filter((x) => !mismoNombre(x.nombre, nombre)));
+}
+
+// Si a un perfil le cambian el nombre, sus partidos pasan al nombre nuevo
+function renombrarEnHistorial(viejo, nuevo) {
+  const lista = leerHistorial().map((p) => ({
+    ...p,
+    jugador: mismoNombre(p.jugador, viejo) ? nuevo : p.jugador,
+    rival: mismoNombre(p.rival, viejo) ? nuevo : p.rival
+  }));
+  almacen.guardar(CLAVE_HISTORIAL, lista);
+}
 
 // Nombre que se muestra de un perfil (con algo por defecto si está vacío)
 const nombreDe = (p, porDefecto = 'Jugador') => p.nombre || porDefecto;
@@ -6456,14 +7256,13 @@ function resolverColores(color0, color1) {
 // Prepara colores, dibujos, nombres y capitanes del marcador antes de una partida
 function prepararEquiposVisuales() {
   if (juego.modo === '1j') juego.perfiles = [perfil, PERFIL_ZORP];
-  else if (juego.modo === '2j') juego.perfiles = [perfil, PERFIL_J2];
+  else if (juego.modo === '2j') juego.perfiles = [perfil, perfilJ2];
   // En línea, juego.perfiles ya llegó con los datos de los dos jugadores
   juego.colores = resolverColores(juego.perfiles[0].color, juego.perfiles[1].color);
   crearSprites();
 
   let nombres = [nombreVisible(0), nombreVisible(1)];
   if (juego.modo === '1j') nombres = [perfil.equipo || 'Tú', 'Zorp'];
-  if (juego.modo === '2j') nombres = [perfil.equipo || 'J1', 'J2'];
   [0, 1].forEach((i) => {
     dom.nombres[i].textContent = nombres[i];
     dom.marcadorEquipos[i].dataset.color = juego.colores[i];
@@ -6477,7 +7276,7 @@ function prepararEquiposVisuales() {
 
   const [c0, c1] = juego.colores.map((c) => COLORES_EQUIPO[c].nombre.toLowerCase());
   let descripcion = `Tu equipo es ${c0} y el de Zorp es ${c1}.`;
-  if (juego.modo === '2j') descripcion = `El jugador 1 es ${c0} y el jugador 2 es ${c1}.`;
+  if (juego.modo === '2j') descripcion = `${nombreJugador(0)} (jugador 1) es ${c0} y ${nombreJugador(1)} (jugador 2) es ${c1}.`;
   if (juego.modo === 'red') descripcion = `${nombres[0]} es ${c0} y ${nombres[1]} es ${c1}.`;
   dom.canvas.setAttribute('aria-label', `Cancha de fútbol vista desde arriba. ${descripcion}`);
 }
@@ -6505,19 +7304,29 @@ function pintarRetrato(lienzo, nombreColor, cuerpo) {
   pincel.drawImage(crearRetrato(nombreColor, cuerpo), 0, 0, lienzo.width, lienzo.height);
 }
 
-// ---- Pantalla "Tu perfil" ----
+// ---- Pantalla "Perfiles" (versión 3.9) ----
+// Arriba la lista de todos los perfiles; al tocar "Editar" o "Nuevo perfil"
+// se muestra el formulario (el mismo de la versión 3).
 const formPerfil = {
   form: $('#form-perfil'),
   nombre: $('#perfil-nombre'),
   equipo: $('#perfil-equipo'),
   vista: $('#perfil-vista'),
   resumen: $('#perfil-resumen'),
-  volver: $('#perfil-volver')
+  error: $('#perfil-error'),
+  cancelar: $('#perfil-cancelar'),
+  zonaLista: $('#perfiles-zona-lista'),
+  lista: $('#lista-perfiles'),
+  sinPerfiles: $('#sin-perfiles'),
+  nuevo: $('#boton-nuevo-perfil')
 };
-let origenPerfil = 'pantalla-inicio';
+let perfilEditando = null;   // nombre del perfil que se está editando (null = perfil nuevo)
 
-// ¿Qué pantalla se ve ahora? (para volver a ella después del perfil)
-const pantallaVisible = () => [...dom.pantallas].find((p) => !p.hidden)?.id || 'pantalla-inicio';
+// Texto corto de un perfil: equipo · color · capitán
+function resumenPerfil(p) {
+  const color = COLORES_EQUIPO[p.color].nombre.toLowerCase();
+  return `${p.equipo || 'Equipo sin nombre'} · ${color} · capitán ${CAPITANES[p.capitan].nombre}`;
+}
 
 // Lo que está escrito y marcado en el formulario, ya revisado
 function leerFormularioPerfil() {
@@ -6537,36 +7346,283 @@ function pintarVistaPerfil() {
   for (const lienzo of formPerfil.form.querySelectorAll('canvas[data-capitan]')) {
     pintarRetrato(lienzo, p.color, CAPITANES[lienzo.dataset.capitan].cuerpo);
   }
-  const color = COLORES_EQUIPO[p.color].nombre.toLowerCase();
-  formPerfil.resumen.textContent = `${nombreDe(p, 'Sin nombre')} · ${p.equipo || 'Equipo sin nombre'} · ${color} · capitán ${CAPITANES[p.capitan].nombre}`;
+  formPerfil.resumen.textContent = `${nombreDe(p, 'Sin nombre')} · ${resumenPerfil(p)}`;
 }
 
-// Abre el perfil recordando de qué pantalla se vino
-function abrirPerfil(origen) {
-  origenPerfil = origen === 'pantalla-perfil' ? origenPerfil : origen;
-  formPerfil.volver.dataset.ir = origenPerfil;
-  formPerfil.nombre.value = perfil.nombre;
-  formPerfil.equipo.value = perfil.equipo;
+// Una fila de la lista: retrato, nombre, equipo, mejor puntaje y botones
+function filaPerfil(p, historial) {
+  const item = document.createElement('li');
+  item.className = 'perfil-fila';
+  const retrato = document.createElement('canvas');
+  retrato.width = 48;
+  retrato.height = 48;
+  retrato.setAttribute('aria-hidden', 'true');
+  pintarRetrato(retrato, p.color, CAPITANES[p.capitan].cuerpo);
+
+  const texto = document.createElement('div');
+  texto.className = 'perfil-fila-texto';
+  const nombre = document.createElement('strong');
+  nombre.textContent = p.nombre;
+  const detalle = document.createElement('span');
+  detalle.textContent = resumenPerfil(p);
+  const puntos = document.createElement('span');
+  puntos.className = 'perfil-fila-puntos';
+  const datos = datosDeJugador(p.nombre, historial);
+  puntos.textContent = datos
+    ? `Mejor puntaje: ${datos.mejor} pts · ${datos.partidos} ${datos.partidos === 1 ? 'partido' : 'partidos'}`
+    : 'Todavía sin partidos';
+  texto.append(nombre, detalle, puntos);
+
+  const botones = document.createElement('div');
+  botones.className = 'perfil-fila-botones';
+  const editar = document.createElement('button');
+  editar.type = 'button';
+  editar.className = 'boton boton-mini';
+  editar.textContent = 'Editar';
+  editar.setAttribute('aria-label', `Editar el perfil de ${p.nombre}`);
+  editar.addEventListener('click', () => abrirEditorPerfil(p));
+  const borrar = document.createElement('button');
+  borrar.type = 'button';
+  borrar.className = 'boton boton-mini boton-secundario';
+  borrar.textContent = 'Borrar';
+  borrar.setAttribute('aria-label', `Borrar el perfil de ${p.nombre}`);
+  // Hay que tocar dos veces para no borrar por error
+  let confirmar = 0;
+  borrar.addEventListener('click', () => {
+    if (!confirmar) {
+      borrar.textContent = '¿Seguro?';
+      confirmar = window.setTimeout(() => { confirmar = 0; borrar.textContent = 'Borrar'; }, 3000);
+      return;
+    }
+    window.clearTimeout(confirmar);
+    borrarPerfil(p.nombre);
+    pintarPerfiles();
+    formPerfil.nuevo.focus();
+    anunciar(`Perfil de ${p.nombre} borrado.`, false, true);
+  });
+  botones.append(editar, borrar);
+
+  item.append(retrato, texto, botones);
+  return item;
+}
+
+// Muestra la lista de perfiles (y esconde el formulario)
+function pintarPerfiles() {
+  const historial = leerHistorial();
+  const lista = leerPerfiles();
+  formPerfil.lista.replaceChildren(...lista.map((p) => filaPerfil(p, historial)));
+  formPerfil.lista.hidden = lista.length === 0;
+  formPerfil.sinPerfiles.hidden = lista.length > 0;
+  formPerfil.form.hidden = true;
+  formPerfil.zonaLista.hidden = false;
+}
+
+// Abre el formulario para editar un perfil (o crear uno nuevo si p es null)
+function abrirEditorPerfil(p) {
+  perfilEditando = p ? p.nombre : null;
+  const datos = p || { ...PERFIL_INICIAL };
+  formPerfil.nombre.value = datos.nombre;
+  formPerfil.equipo.value = datos.equipo;
   for (const opcion of formPerfil.form.querySelectorAll('input[type="radio"]')) {
-    opcion.checked = (opcion.name === 'perfil-color' && opcion.value === perfil.color)
-      || (opcion.name === 'perfil-capitan' && opcion.value === perfil.capitan);
+    opcion.checked = (opcion.name === 'perfil-color' && opcion.value === datos.color)
+      || (opcion.name === 'perfil-capitan' && opcion.value === datos.capitan);
   }
+  formPerfil.error.hidden = true;
+  formPerfil.zonaLista.hidden = true;
+  formPerfil.form.hidden = false;
   pintarVistaPerfil();
+  formPerfil.nombre.focus();
+}
+
+function errorPerfil(texto) {
+  formPerfil.error.textContent = texto;
+  formPerfil.error.hidden = false;
+  formPerfil.nombre.focus();
 }
 
 function prepararPantallaPerfil() {
   formPerfil.form.addEventListener('input', pintarVistaPerfil);
   formPerfil.form.addEventListener('change', pintarVistaPerfil);
+  formPerfil.nuevo.addEventListener('click', () => abrirEditorPerfil(null));
+  formPerfil.cancelar.addEventListener('click', () => {
+    pintarPerfiles();
+    formPerfil.nuevo.focus();
+  });
   formPerfil.form.addEventListener('submit', (evento) => {
     evento.preventDefault();
-    perfil = leerFormularioPerfil();
-    almacen.guardar(CLAVE_PERFIL, perfil);
+    const nuevo = leerFormularioPerfil();
+    if (!nuevo.nombre) return errorPerfil('Escribe un nombre para el perfil.');
+    const repetido = leerPerfiles().some((x) => mismoNombre(x.nombre, nuevo.nombre) && !mismoNombre(x.nombre, perfilEditando));
+    if (repetido) return errorPerfil('Ya hay un perfil con ese nombre. Escoge otro.');
+    const viejo = perfilEditando || nuevo.nombre;
+    guardarPerfilEnLista(nuevo, viejo);
+    if (perfilEditando && nuevo.nombre !== perfilEditando) renombrarEnHistorial(perfilEditando, nuevo.nombre);
+    // Si era el perfil que se está usando, también se actualiza
+    if (mismoNombre(perfil.nombre, viejo)) { perfil = nuevo; almacen.guardar(CLAVE_PERFIL, perfil); }
+    if (mismoNombre(perfilJ2.nombre, viejo)) { perfilJ2 = nuevo; almacen.guardar(CLAVE_PERFIL_J2, perfilJ2); }
     sonido.iniciar();
     sonido.tocar('menu');
-    mostrarPantalla(origenPerfil);
-    anunciar(`Perfil guardado: ${formPerfil.resumen.textContent}.`);
+    pintarPerfiles();
+    formPerfil.nuevo.focus();
+    anunciar(`Perfil guardado: ${nuevo.nombre} · ${resumenPerfil(nuevo)}.`);
     perfilCambiado();
   });
+}
+
+// ---- Pantalla "Prepara tu equipo" (versión 3.9) ----
+// Sale después de elegir el modo. Con 2 jugadores hay dos tarjetas.
+// Arriba de cada tarjeta están los perfiles guardados: un toque y se carga.
+const equipos = {
+  form: $('#form-equipo'),
+  tarjetas: $('#tarjetas-equipo'),
+  plantilla: $('#plantilla-equipo'),
+  error: $('#error-equipo'),
+  listo: $('#boton-listo-equipo'),
+  volver: $('#equipo-volver'),
+  cambiarEnSala: $('#boton-cambiar-equipo'),
+  modo: '1j',          // para qué modo se está preparando
+  desdeSala: false     // true si se abrió con "Cambiar equipo" desde la sala en línea
+};
+
+// Copia la plantilla del HTML y le pone el número de jugador (0 o 1)
+function crearTarjetaEquipo(n) {
+  const caja = document.createElement('div');
+  caja.innerHTML = equipos.plantilla.innerHTML.replaceAll('__N__', String(n));
+  return caja.firstElementChild;
+}
+
+// Lo que está escrito y marcado en una tarjeta, ya revisado
+function datosTarjeta(tarjeta) {
+  const marcado = (campo) => tarjeta.querySelector(`input[name^="${campo}-"]:checked`)?.value;
+  return limpiarPerfil({
+    nombre: tarjeta.querySelector('input[name="nombre"]').value,
+    equipo: tarjeta.querySelector('input[name="equipo"]').value,
+    color: marcado('color'),
+    capitan: marcado('capitan')
+  });
+}
+
+// Llena una tarjeta con un perfil
+function ponerEnTarjeta(tarjeta, p) {
+  tarjeta.querySelector('input[name="nombre"]').value = p.nombre;
+  tarjeta.querySelector('input[name="equipo"]').value = p.equipo;
+  for (const opcion of tarjeta.querySelectorAll('input[type="radio"]')) {
+    opcion.checked = (opcion.name.startsWith('color-') && opcion.value === p.color)
+      || (opcion.name.startsWith('capitan-') && opcion.value === p.capitan);
+  }
+  pintarTarjeta(tarjeta);
+}
+
+// Vista previa, capitanes con el color escogido y el botón del perfil marcado
+function pintarTarjeta(tarjeta) {
+  const p = datosTarjeta(tarjeta);
+  pintarRetrato(tarjeta.querySelector('.perfil-vista'), p.color, CAPITANES[p.capitan].cuerpo);
+  for (const lienzo of tarjeta.querySelectorAll('canvas[data-capitan]')) {
+    pintarRetrato(lienzo, p.color, CAPITANES[lienzo.dataset.capitan].cuerpo);
+  }
+  tarjeta.querySelector('.perfil-resumen').textContent = `${nombreDe(p, 'Sin nombre')} · ${resumenPerfil(p)}`;
+  for (const chip of tarjeta.querySelectorAll('.chip-perfil[data-perfil]')) {
+    chip.setAttribute('aria-pressed', String(mismoNombre(chip.dataset.perfil, p.nombre)));
+  }
+}
+
+// Botones con los perfiles guardados (y uno para empezar uno nuevo)
+function pintarChips(tarjeta, colorNuevo) {
+  const lista = leerPerfiles();
+  const caja = tarjeta.querySelector('.chips-perfiles');
+  tarjeta.querySelector('.perfiles-guardados').hidden = lista.length === 0;
+  const chips = lista.map((p) => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'chip-perfil';
+    chip.dataset.perfil = p.nombre;
+    const muestra = document.createElement('span');
+    muestra.className = `muestra-color color-${p.color}`;
+    muestra.setAttribute('aria-hidden', 'true');
+    chip.append(muestra, document.createTextNode(p.nombre));
+    chip.addEventListener('click', () => {
+      ponerEnTarjeta(tarjeta, p);
+      equipos.error.hidden = true;
+    });
+    return chip;
+  });
+  const nuevo = document.createElement('button');
+  nuevo.type = 'button';
+  nuevo.className = 'chip-perfil chip-nuevo';
+  nuevo.textContent = '+ Nuevo';
+  nuevo.addEventListener('click', () => {
+    ponerEnTarjeta(tarjeta, { ...PERFIL_INICIAL, color: colorNuevo });
+    tarjeta.querySelector('input[name="nombre"]').focus();
+  });
+  caja.replaceChildren(...chips, nuevo);
+}
+
+// Abre "Prepara tu equipo" para un modo: '1j', '2j' o 'red'
+function abrirEquipos(modo, desdeSala = false) {
+  equipos.modo = modo;
+  equipos.desdeSala = desdeSala;
+  const dos = modo === '2j';
+  const titulos = dos ? ['Jugador 1 · W A S D', 'Jugador 2 · flechas'] : ['Tu equipo'];
+  const perfiles = [perfil, perfilJ2];
+  const tarjetas = titulos.map((titulo, n) => {
+    const tarjeta = crearTarjetaEquipo(n);
+    tarjeta.querySelector('.tarjeta-equipo-titulo').textContent = titulo;
+    tarjeta.addEventListener('input', () => pintarTarjeta(tarjeta));
+    tarjeta.addEventListener('change', () => pintarTarjeta(tarjeta));
+    return tarjeta;
+  });
+  equipos.tarjetas.replaceChildren(...tarjetas);
+  equipos.tarjetas.classList.toggle('dos', dos);
+  tarjetas.forEach((tarjeta, n) => {
+    pintarChips(tarjeta, n === 0 ? 'celeste' : 'rosado');
+    ponerEnTarjeta(tarjeta, perfiles[n]);
+  });
+  equipos.listo.textContent = modo === 'red' ? (desdeSala ? 'Guardar' : 'Continuar') : '¡A jugar!';
+  equipos.error.hidden = true;
+  mostrarPantalla('pantalla-equipo');
+}
+
+function errorEquipo(tarjeta, texto) {
+  equipos.error.textContent = texto;
+  equipos.error.hidden = false;
+  tarjeta.querySelector('input[name="nombre"]').focus();
+}
+
+function prepararPantallaEquipo() {
+  equipos.form.addEventListener('submit', (evento) => {
+    evento.preventDefault();
+    const tarjetas = [...equipos.tarjetas.children];
+    const datos = tarjetas.map(datosTarjeta);
+    const falta = datos.findIndex((p) => !p.nombre);
+    if (falta >= 0) return errorEquipo(tarjetas[falta], 'Escribe tu nombre: así quedas guardado en los récords.');
+    if (datos.length === 2 && mismoNombre(datos[0].nombre, datos[1].nombre)) {
+      return errorEquipo(tarjetas[1], 'Los dos jugadores no pueden tener el mismo nombre.');
+    }
+    // Se guardan en la lista de perfiles (el jugador 1 queda de primero)
+    if (datos[1]) {
+      perfilJ2 = datos[1];
+      almacen.guardar(CLAVE_PERFIL_J2, perfilJ2);
+      guardarPerfilEnLista(perfilJ2);
+    }
+    perfil = datos[0];
+    almacen.guardar(CLAVE_PERFIL, perfil);
+    guardarPerfilEnLista(perfil);
+    sonido.tocar('menu');
+    if (equipos.desdeSala) {
+      // Volver a la sala sin cerrarla; el rival recibe el equipo nuevo
+      mostrarPantalla('pantalla-red');
+      perfilCambiado();
+    } else if (equipos.modo === 'red') {
+      abrirSala();
+    } else {
+      empezarPartida();
+    }
+  });
+  equipos.volver.addEventListener('click', () => {
+    if (equipos.desdeSala) mostrarPantalla('pantalla-red');
+    else mostrarPantalla(equipos.modo === '1j' ? 'pantalla-nivel' : 'pantalla-jugadores');
+  });
+  equipos.cambiarEnSala.addEventListener('click', () => abrirEquipos('red', true));
 }
 
 /* 20. JUEGO EN LÍNEA ====================================================== */
@@ -7173,11 +8229,13 @@ function iniciar() {
   crearSprites();
   crearArteObjetos();
   prepararPantallaPerfil();
+  prepararPantallaEquipo();   // versión 3.9
   prepararSala();
   cargarHojas();
   sonido.cargarArchivos();
   pintarBotonSonido();
   dom.botonPantalla.hidden = !pantallaCompletaDisponible();
+  dom.botonPantallaMenu.hidden = !pantallaCompletaDisponible();
   pintarBotonPantalla();
   pintarLogros();
   if ('ResizeObserver' in window) new ResizeObserver(ajustarCanvas).observe(dom.zona);

@@ -18,8 +18,9 @@ Juego web de fútbol 4 contra 4 estilo Atari: juega contra Zorp y su equipo, con
 | Mover | W A S D | Flechas | Joystick |
 | Patear (toque = pasar, mantener = tirar) | F | Ñ | Patear |
 | Derrapar | G | . (punto) | Derrapar |
+| Cambiar de alienígena | H | L | (automático) |
 
-P, Espacio o Esc pausan; M silencia. Siempre manejas al alienígena de tu equipo más cercano al balón.
+P, Espacio o Esc pausan; M silencia. El juego te cambia solo al alienígena más cercano al balón, y con Cambiar eliges tú. El pase va hacia donde apuntas: un aro punteado te muestra a quién le llega.
 
 El balón va cada vez más rápido: después de cada gol y cada 30 segundos de juego. Antes de jugar, en **Prepara tu equipo**, cada jugador pone su nombre, el nombre de su equipo, su color y su capitán (o toca su perfil guardado). Todo se guarda en tu navegador (LocalStorage): en **Perfiles** ves a todos los que han jugado, y en **Récords** el mayor puntaje de cada persona, los últimos partidos y el botón para reiniciar las estadísticas.
 
