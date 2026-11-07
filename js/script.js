@@ -1,6 +1,6 @@
 'use strict';
 /* ==========================================================================
-   GALAXY GOL · js/script.js · versión 4.1
+   GALAXY GOL · js/script.js · versión 4.2
    Fútbol arcade 2D de alienígenas. Autor: David Santiago Sarmiento Salguero.
 
    Índice:
@@ -697,7 +697,65 @@ function mostrarPantalla(id, enfocar = true) {
   for (const pantalla of dom.pantallas) pantalla.hidden = pantalla.id !== id;
   document.title = TITULOS[id] || 'Galaxy Gol';
   const actual = document.getElementById(id);
+  encajarMenu();   // versión 4.2: que quepa sin bajar con la rueda
   if (enfocar) actual.querySelector('h1, h2')?.focus();
+}
+
+// ---- Menús que caben en la pantalla (versión 4.2) ----
+// Si el panel de un menú es más alto que la pantalla, se achica con "zoom"
+// lo justo para que quepa entero. El zoom va en una hoja de estilos aparte
+// (adoptedStyleSheets), así no se escribe ningún atributo style en el HTML.
+// En el celular parado no se achica tanto (se leería muy chico): ahí se
+// puede bajar con el dedo como siempre.
+const ENCAJE = { pisoAcostado: 0.55, pisoParado: 0.85 };
+const encaje = { hoja: null, caja: null, observador: null, pendiente: false };
+
+function prepararEncaje() {
+  const sePuede = 'adoptedStyleSheets' in document && window.CSS && CSS.supports('zoom', '0.5');
+  if (!sePuede) return;   // navegadores viejos: se baja con la rueda, como antes
+  encaje.hoja = new CSSStyleSheet();
+  document.adoptedStyleSheets = [...document.adoptedStyleSheets, encaje.hoja];
+  // Si cambia lo que hay adentro (sale el QR, un mensaje, la lista de récords...)
+  if ('ResizeObserver' in window) encaje.observador = new ResizeObserver(pedirEncaje);
+  window.addEventListener('resize', pedirEncaje);
+  if (document.fonts) document.fonts.ready.then(pedirEncaje);
+}
+
+// Un solo ajuste por cuadro, aunque lleguen varios avisos juntos
+function pedirEncaje() {
+  if (encaje.pendiente) return;
+  encaje.pendiente = true;
+  window.requestAnimationFrame(() => {
+    encaje.pendiente = false;
+    encajarMenu();
+  });
+}
+
+function encajarMenu() {
+  if (!encaje.hoja) return;
+  const pantalla = [...dom.pantallas].find((p) => !p.hidden);
+  const caja = pantalla && pantalla.querySelector(':scope > .panel, :scope > .inicio-contenido');
+  if (!caja || pantalla.id === 'pantalla-partida') {
+    encaje.hoja.replaceSync('');
+    return;
+  }
+  if (encaje.caja !== caja) {
+    if (encaje.observador) {
+      encaje.observador.disconnect();
+      encaje.observador.observe(caja);
+    }
+    encaje.caja = caja;
+  }
+  // Se mide el panel a tamaño normal y se compara con el alto disponible
+  encaje.hoja.replaceSync('');
+  const estilo = getComputedStyle(pantalla);
+  const disponible = pantalla.clientHeight - parseFloat(estilo.paddingTop) - parseFloat(estilo.paddingBottom);
+  const alto = caja.getBoundingClientRect().height;
+  if (alto <= disponible || disponible <= 0) return;
+  const parado = window.matchMedia('(orientation: portrait)').matches;
+  const piso = parado ? ENCAJE.pisoParado : ENCAJE.pisoAcostado;
+  const escala = Math.max(piso, Math.floor((disponible / alto) * 100) / 100);
+  encaje.hoja.replaceSync(`#${pantalla.id} > .panel, #${pantalla.id} > .inicio-contenido { zoom: ${escala}; }`);
 }
 
 // Escribe un aviso para lectores de pantalla.
@@ -5321,6 +5379,8 @@ function iniciar() {
   dom.botonPantallaMenu.hidden = !pantallaCompletaDisponible();
   pintarBotonPantalla();
   pintarLogros();
+  prepararEncaje();   // versión 4.2: los menús caben en la pantalla
+  encajarMenu();
   leerInvitacion();   // versión 4.1: ¿llegó con el QR de un amigo?
   if ('ResizeObserver' in window) new ResizeObserver(ajustarCanvas).observe(dom.zona);
   window.addEventListener('resize', ajustarCanvas);

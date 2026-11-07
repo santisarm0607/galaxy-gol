@@ -2463,6 +2463,155 @@ kbd.tecla-defensa {
     flex: 1;
   }
 }
+
+/* ==========================================================================
+   MENÚS QUE CABEN EN LA PANTALLA (versión 4.2)
+   Idea: todo el menú se ve sin bajar con la rueda, aunque el navegador no
+   esté en pantalla completa.
+   1. En pantallas anchas, las pantallas largas se acomodan en columnas.
+   2. Con poca altura, títulos y espacios un poco más chicos.
+   3. Si aun así no cabe, js/script.js (encajarMenu) achica el panel lo justo
+      con "zoom" (sin atributos style: usa una hoja de estilos aparte).
+   ========================================================================== */
+
+/* Controles: en el computador no hace falta la tarjeta del celular, y en el
+   celular no hacen falta las del teclado */
+@media (hover: hover) and (pointer: fine) {
+  .tarjeta-celular {
+    display: none;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .tarjeta-cometa,
+  .tarjeta-zorp,
+  .tarjeta-generales {
+    display: none;
+  }
+}
+
+/* Poca altura (laptops, navegador sin pantalla completa): todo más compacto */
+@media (max-height: 820px) and (orientation: landscape) {
+  .pantalla-menu {
+    padding-block: 14px;
+  }
+
+  .panel {
+    gap: 14px;
+    padding: 24px 22px 20px;
+  }
+
+  .titulo-pantalla {
+    font-size: clamp(2.2rem, 7vh, 3rem);
+  }
+}
+
+/* Inicio con poca altura: los 6 botones en 3 columnas (2 filas) */
+@media (max-height: 820px) and (min-width: 760px) {
+  .menu {
+    width: min(100%, 640px);
+  }
+
+  .menu-lista {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+}
+
+/* Pantallas anchas y acostadas (también el celular acostado): columnas */
+@media (min-width: 760px) and (orientation: landscape) {
+  /* -- Sala en línea: a la izquierda los jugadores; a la derecha el código
+        con el QR (o crear sala / unirse) -- */
+  .panel-sala {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+    column-gap: 28px;
+    width: min(100%, 1080px);
+  }
+
+  .panel-sala > * {
+    grid-column: 1;
+    justify-self: center;
+  }
+
+  .panel-sala > .titulo-pantalla,
+  .panel-sala > .ayuda {
+    grid-column: 1 / -1;
+  }
+
+  .panel-sala > .sala-codigo,
+  .panel-sala > .sala-opciones {
+    grid-column: 2;
+    grid-row: 2 / span 4;
+    align-self: center;
+  }
+
+  /* -- Prepara tu equipo (1 jugador): datos a la izquierda, color y capitán a la derecha -- */
+  .panel-equipo {
+    width: min(100%, 1040px);
+  }
+
+  .tarjetas-equipo:not(.dos) .tarjeta-equipo {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    column-gap: 20px;
+  }
+
+  .tarjetas-equipo:not(.dos) .tarjeta-equipo > * {
+    grid-column: 1;
+  }
+
+  .tarjetas-equipo:not(.dos) .tarjeta-equipo > .grupo-opciones {
+    grid-column: 2;
+  }
+
+  .tarjetas-equipo:not(.dos) .tarjeta-equipo > .grupo-opciones:nth-of-type(1) {
+    grid-row: 1;
+  }
+
+  .tarjetas-equipo:not(.dos) .tarjeta-equipo > .grupo-opciones:nth-of-type(2) {
+    grid-row: 2 / span 4;
+  }
+
+  /* -- Logros en dos columnas -- */
+  #pantalla-logros .panel {
+    width: min(100%, 980px);
+  }
+
+  .lista-logros {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Controles en el computador: las 4 tarjetas en una fila y las reglas en dos columnas */
+@media (min-width: 1100px) and (hover: hover) and (pointer: fine) {
+  #pantalla-controles .panel-ancho {
+    width: min(100%, 1400px);
+  }
+
+  .grupos-controles {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .tarjeta-poderes {
+    grid-column: auto;
+  }
+
+  .tarjeta-poderes .lista-poderes {
+    grid-template-columns: 1fr;
+  }
+
+  .reglas ul {
+    columns: 2;
+    column-gap: 36px;
+  }
+
+  .reglas li {
+    break-inside: avoid;
+  }
+}
 </style>
 </head>
 <body>
@@ -2551,7 +2700,7 @@ kbd.tecla-defensa {
           </section>
 
           <!-- Teclas generales -->
-          <section class="tarjeta" aria-labelledby="titulo-generales">
+          <section class="tarjeta tarjeta-generales" aria-labelledby="titulo-generales">
             <h3 id="titulo-generales">Para todos</h3>
             <dl class="acciones">
               <div class="accion">
@@ -3076,7 +3225,7 @@ kbd.tecla-defensa {
 <script>
 'use strict';
 /* ==========================================================================
-   GALAXY GOL · js/script.js · versión 4.1
+   GALAXY GOL · js/script.js · versión 4.2
    Fútbol arcade 2D de alienígenas. Autor: David Santiago Sarmiento Salguero.
 
    Índice:
@@ -3773,7 +3922,65 @@ function mostrarPantalla(id, enfocar = true) {
   for (const pantalla of dom.pantallas) pantalla.hidden = pantalla.id !== id;
   document.title = TITULOS[id] || 'Galaxy Gol';
   const actual = document.getElementById(id);
+  encajarMenu();   // versión 4.2: que quepa sin bajar con la rueda
   if (enfocar) actual.querySelector('h1, h2')?.focus();
+}
+
+// ---- Menús que caben en la pantalla (versión 4.2) ----
+// Si el panel de un menú es más alto que la pantalla, se achica con "zoom"
+// lo justo para que quepa entero. El zoom va en una hoja de estilos aparte
+// (adoptedStyleSheets), así no se escribe ningún atributo style en el HTML.
+// En el celular parado no se achica tanto (se leería muy chico): ahí se
+// puede bajar con el dedo como siempre.
+const ENCAJE = { pisoAcostado: 0.55, pisoParado: 0.85 };
+const encaje = { hoja: null, caja: null, observador: null, pendiente: false };
+
+function prepararEncaje() {
+  const sePuede = 'adoptedStyleSheets' in document && window.CSS && CSS.supports('zoom', '0.5');
+  if (!sePuede) return;   // navegadores viejos: se baja con la rueda, como antes
+  encaje.hoja = new CSSStyleSheet();
+  document.adoptedStyleSheets = [...document.adoptedStyleSheets, encaje.hoja];
+  // Si cambia lo que hay adentro (sale el QR, un mensaje, la lista de récords...)
+  if ('ResizeObserver' in window) encaje.observador = new ResizeObserver(pedirEncaje);
+  window.addEventListener('resize', pedirEncaje);
+  if (document.fonts) document.fonts.ready.then(pedirEncaje);
+}
+
+// Un solo ajuste por cuadro, aunque lleguen varios avisos juntos
+function pedirEncaje() {
+  if (encaje.pendiente) return;
+  encaje.pendiente = true;
+  window.requestAnimationFrame(() => {
+    encaje.pendiente = false;
+    encajarMenu();
+  });
+}
+
+function encajarMenu() {
+  if (!encaje.hoja) return;
+  const pantalla = [...dom.pantallas].find((p) => !p.hidden);
+  const caja = pantalla && pantalla.querySelector(':scope > .panel, :scope > .inicio-contenido');
+  if (!caja || pantalla.id === 'pantalla-partida') {
+    encaje.hoja.replaceSync('');
+    return;
+  }
+  if (encaje.caja !== caja) {
+    if (encaje.observador) {
+      encaje.observador.disconnect();
+      encaje.observador.observe(caja);
+    }
+    encaje.caja = caja;
+  }
+  // Se mide el panel a tamaño normal y se compara con el alto disponible
+  encaje.hoja.replaceSync('');
+  const estilo = getComputedStyle(pantalla);
+  const disponible = pantalla.clientHeight - parseFloat(estilo.paddingTop) - parseFloat(estilo.paddingBottom);
+  const alto = caja.getBoundingClientRect().height;
+  if (alto <= disponible || disponible <= 0) return;
+  const parado = window.matchMedia('(orientation: portrait)').matches;
+  const piso = parado ? ENCAJE.pisoParado : ENCAJE.pisoAcostado;
+  const escala = Math.max(piso, Math.floor((disponible / alto) * 100) / 100);
+  encaje.hoja.replaceSync(`#${pantalla.id} > .panel, #${pantalla.id} > .inicio-contenido { zoom: ${escala}; }`);
 }
 
 // Escribe un aviso para lectores de pantalla.
@@ -8397,6 +8604,8 @@ function iniciar() {
   dom.botonPantallaMenu.hidden = !pantallaCompletaDisponible();
   pintarBotonPantalla();
   pintarLogros();
+  prepararEncaje();   // versión 4.2: los menús caben en la pantalla
+  encajarMenu();
   leerInvitacion();   // versión 4.1: ¿llegó con el QR de un amigo?
   if ('ResizeObserver' in window) new ResizeObserver(ajustarCanvas).observe(dom.zona);
   window.addEventListener('resize', ajustarCanvas);
