@@ -115,6 +115,11 @@
   --tecla-ataque-fondo: #3a2f0a;
   --tecla-defensa-fondo: #0a2f3a;
 
+  /* Código QR de la sala (versión 4.1): claro y oscuro con mucho contraste
+     para que cualquier cámara lo lea */
+  --qr-claro: #fbf5e4;
+  --qr-oscuro: #120c33;
+
   /* Tipografía: Jersey 10 (títulos y marcador, pixelada) y Atkinson
      Hyperlegible (textos). Atkinson está hecha para personas con baja visión:
      cada letra se distingue bien (B y 8, G y 6, l, I y 1). Versión 3.1. */
@@ -1301,6 +1306,49 @@ kbd.tecla-defensa {
   letter-spacing: 0.18em;
   color: var(--franja-1);
   user-select: all;
+}
+
+/* ---- Código QR de la sala (versión 4.1) ---- */
+.qr-figura {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin: 10px 0 0;
+}
+
+.qr-figura[hidden],
+.boton-compartir[hidden] {
+  display: none;
+}
+
+/* El canvas ya trae el margen claro alrededor (lo necesitan las cámaras) */
+.qr-sala {
+  width: min(176px, 46vw);
+  height: auto;
+  border-radius: var(--radio);
+  image-rendering: pixelated;
+}
+
+.qr-figura figcaption {
+  max-width: 26ch;
+  font-size: 0.85rem;
+  text-align: center;
+  color: var(--texto-suave);
+}
+
+.boton-compartir {
+  margin-top: 8px;
+}
+
+/* Aviso en "Prepara tu equipo" cuando llegas con el QR de un amigo */
+.aviso-invitacion {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--texto);
+  border: 2px solid var(--foco);
+  border-radius: var(--radio);
 }
 
 .sala-opciones {

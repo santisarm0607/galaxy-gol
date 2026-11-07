@@ -177,6 +177,13 @@ Pausa: P, Espacio o Esc. Silencio: M. Con 1 jugador también sirven las teclas d
 - **Versión 3.3** (22 de octubre de 2026): el jugador 1 usa F (pasar), G (tirar) y H (derrapar), en fila y en el mismo orden que la guía. La guía de botones pasa a la esquina inferior derecha (con 2 jugadores, la del jugador 2 va a la izquierda).
 - **Versión 3.4** (22 de octubre de 2026): pasar y tirar se juntan en un solo botón, **Patear** (F, Ñ o el botón del celular): un toque pasa y mantener carga un tiro con fuerza, con barrita de carga. Derrapar pasa a la G. En celular quedan 2 botones: Patear y Derrapar.
 - **Versión 3.5** (23 de octubre de 2026): carpetas separadas por tipo de código: `css/style.css` y `js/script.js` (antes estaban al lado de `index.html`). No cambia nada del juego.
+- **Versión 4.1** (7 de noviembre de 2026): **código QR en la sala en línea**.
+  - Quien crea la sala ve, debajo del código, un QR. Tu amigo lo escanea con la cámara del celular, se abre el juego (no tiene que tenerlo), escribe su nombre en "Prepara tu equipo" y entra solo a la sala.
+  - El QR lleva el enlace `https://santisarm0607.github.io/galaxy-gol/?sala=CODIGO`. Si el juego está publicado en otra dirección, usa esa; si lo abres con Live Server en tu computador (localhost), usa la de GitHub Pages, porque localhost no le sirve a otro aparato.
+  - Botón **Compartir enlace**: en celular abre el menú de compartir (WhatsApp, etc.); en computador copia el enlace.
+  - El QR lo dibuja la librería qrcode-generator 1.4.4 (jsDelivr, con huella SRI, igual que PeerJS). Si no carga, la sala funciona igual sin el QR.
+  - Cambios en `index.html` (script de la librería, `#qr-figura`, `#boton-compartir-sala`, `#aviso-invitacion`), `css/style.css` (`--qr-claro`, `--qr-oscuro` y sección "Código QR de la sala") y `js/script.js` sección 20 (`URL_PUBLICA`, `enlaceDeSala`, `pintarQR`, `compartirSala`, `leerInvitacion`) y sección 21 (`leerInvitacion()` al arrancar).
+  - Prueba: `herramientas/probar_red.py` lee el QR con OpenCV y el invitado entra abriendo el enlace del QR. Necesita `npm install qrcode-generator@1.4.4` en la carpeta de PeerJS.
 - **Versión 4.0** (31 de octubre de 2026): **pase dirigido** y vuelve la tecla **Cambiar**.
   - El pase va hacia donde apuntas; sin dirección es automático; sin nadie hacia ese lado, va al espacio. Aro punteado sobre quien recibiría el pase (mira si va al espacio).
   - Tecla Cambiar: H (jugador 1) y L (jugador 2). Convive con el cambio automático, que respeta tu elección 3 segundos. Funciona en línea (el invitado manda la acción `cambiar`).

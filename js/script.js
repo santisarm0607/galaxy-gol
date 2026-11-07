@@ -1,6 +1,6 @@
 'use strict';
 /* ==========================================================================
-   GALAXY GOL · js/script.js · versión 4.0
+   GALAXY GOL · js/script.js · versión 4.1
    Fútbol arcade 2D de alienígenas. Autor: David Santiago Sarmiento Salguero.
 
    Índice:
@@ -401,7 +401,7 @@ function leerColores() {
     'baba', 'baba-oscuro', 'charco', 'crater', 'crater-borde', 'roca', 'roca-oscura', 'fuego',
     'nave', 'nave-oscura', 'nave-cupula', 'rayo', 'polvo', 'aviso-impacto',
     'naranja', 'naranja-oscuro', 'naranja-claro', 'morado', 'morado-oscuro', 'morado-claro',
-    'rojo', 'rojo-oscuro', 'rojo-claro'
+    'rojo', 'rojo-oscuro', 'rojo-claro', 'qr-claro', 'qr-oscuro'
   ];
   for (const nombre of nombres) COLORES[nombre] = css.getPropertyValue('--' + nombre).trim();
   FUENTE_TITULO = css.getPropertyValue('--fuente-titulo').trim() || 'sans-serif';
@@ -4562,6 +4562,10 @@ function abrirEquipos(modo, desdeSala = false) {
   });
   equipos.listo.textContent = modo === 'red' ? (desdeSala ? 'Guardar' : 'Continuar') : '¡A jugar!';
   equipos.error.hidden = true;
+  // Versión 4.1: si llegaste con el QR de un amigo, se te avisa a qué sala vas
+  const aviso = $('#aviso-invitacion');
+  aviso.hidden = !(modo === 'red' && salaInvitada);
+  aviso.textContent = salaInvitada ? `¡Te invitaron a la sala ${salaInvitada}! Escribe tu nombre y toca Continuar para entrar.` : '';
   mostrarPantalla('pantalla-equipo');
 }
 
@@ -4602,6 +4606,7 @@ function prepararPantallaEquipo() {
     }
   });
   equipos.volver.addEventListener('click', () => {
+    salaInvitada = '';   // si se devuelve, ya no entra solo a la sala
     if (equipos.desdeSala) mostrarPantalla('pantalla-red');
     else mostrarPantalla(equipos.modo === '1j' ? 'pantalla-nivel' : 'pantalla-jugadores');
   });
@@ -4693,6 +4698,9 @@ const sala = {
   codigoEscrito: $('#codigo-sala'),
   cajaCodigo: $('#red-codigo'),
   codigo: $('#codigo-grande'),
+  qrFigura: $('#qr-figura'),
+  qr: $('#qr-sala'),
+  compartir: $('#boton-compartir-sala'),
   empezar: $('#boton-empezar-red'),
   tuRetrato: $('#sala-tu-retrato'),
   tuNombre: $('#sala-tu-nombre'),
@@ -4738,7 +4746,92 @@ function pintarSala() {
   for (const control of sala.formUnirse.elements) control.disabled = !disponible;
   sala.cajaCodigo.hidden = red.rol !== 'anfitrion';
   sala.codigo.textContent = red.codigo;
+  pintarQR(red.rol === 'anfitrion' && red.peer && red.peer.open ? red.codigo : '');
   sala.empezar.hidden = !(red.rol === 'anfitrion' && red.rival && red.conectado());
+}
+
+// ---- Código QR e invitación (versión 4.1) ----
+// El QR guarda un enlace al juego con el código de la sala, por ejemplo
+// https://santisarm0607.github.io/galaxy-gol/?sala=K7PX
+// Quien lo escanea abre el juego en su celular (no tiene que tenerlo), pone su
+// nombre en "Prepara tu equipo" y entra solo a la sala.
+const URL_PUBLICA = 'https://santisarm0607.github.io/galaxy-gol/';
+let salaInvitada = '';      // código que llegó en el enlace (?sala=…)
+let qrPintado = '';         // para no dibujar el mismo QR una y otra vez
+
+// Si abres el juego en tu computador (Live Server en localhost), ese enlace no
+// le sirve a otro aparato: entonces el QR lleva a la página publicada.
+function enlaceDeSala(codigo) {
+  const local = !/^https?:$/.test(location.protocol) ||
+    ['localhost', '127.0.0.1', '[::1]', ''].includes(location.hostname);
+  const base = local ? URL_PUBLICA : location.origin + location.pathname;
+  return `${base}?sala=${encodeURIComponent(codigo)}`;
+}
+
+// Dibuja el QR en el canvas: cada cuadrito del QR es un bloque de píxeles
+function pintarQR(codigo) {
+  const listo = Boolean(codigo) && typeof window.qrcode === 'function';
+  sala.qrFigura.hidden = !listo;
+  sala.compartir.hidden = !codigo;
+  if (!listo || qrPintado === codigo) return;
+  let qr;
+  try {
+    qr = window.qrcode(0, 'M');   // 0 = el tamaño justo; M = aguanta un poco de reflejo
+    qr.addData(enlaceDeSala(codigo));
+    qr.make();
+  } catch (error) {
+    sala.qrFigura.hidden = true;
+    return;
+  }
+  const modulos = qr.getModuleCount();
+  const margen = 4;                                   // borde claro que piden las cámaras
+  const lado = Math.floor(sala.qr.width / (modulos + margen * 2));
+  const inicio = Math.floor((sala.qr.width - lado * modulos) / 2);
+  const pincel = sala.qr.getContext('2d');
+  pincel.fillStyle = COLORES['qr-claro'];
+  pincel.fillRect(0, 0, sala.qr.width, sala.qr.height);
+  pincel.fillStyle = COLORES['qr-oscuro'];
+  for (let fila = 0; fila < modulos; fila++) {
+    for (let col = 0; col < modulos; col++) {
+      if (qr.isDark(fila, col)) pincel.fillRect(inicio + col * lado, inicio + fila * lado, lado, lado);
+    }
+  }
+  sala.qr.setAttribute('aria-label', `Código QR para entrar a la sala ${codigo}`);
+  qrPintado = codigo;
+}
+
+// "Compartir enlace": en el celular abre el menú de compartir (WhatsApp, etc.);
+// en el computador copia el enlace.
+async function compartirSala() {
+  if (!red.codigo) return;
+  const enlace = enlaceDeSala(red.codigo);
+  const texto = `¡Juguemos Galaxy Gol! Entra a mi sala ${red.codigo}:`;
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: 'Galaxy Gol', text: texto, url: enlace });
+      return;
+    }
+    await navigator.clipboard.writeText(enlace);
+    estadoSala('Enlace copiado. Pégaselo a tu amigo por chat.');
+  } catch (error) {
+    // Si cerró el menú de compartir no pasa nada; si falló, se muestra el enlace
+    if (error && error.name !== 'AbortError') estadoSala(`Enlace de tu sala: ${enlace}`);
+  }
+}
+
+// Al abrir el juego desde un QR o un enlace con ?sala=CODIGO
+function leerInvitacion() {
+  let codigo = '';
+  try {
+    codigo = normalizarCodigo(new URLSearchParams(location.search).get('sala'));
+    // Se borra del enlace para que al recargar no vuelva a entrar
+    if (location.search) history.replaceState(null, '', location.pathname + location.hash);
+  } catch (error) {
+    return;
+  }
+  if (codigo.length !== RED.largoCodigo) return;
+  salaInvitada = codigo;
+  abrirEquipos('red');
 }
 
 // Al entrar a "Jugar en línea" desde "¿Cuántos jugadores?"
@@ -4749,6 +4842,12 @@ function abrirSala() {
   if (red.rol) return;
   if (!redDisponible()) {
     estadoSala('El juego en línea no está disponible aquí. Necesita internet y abrir el juego con Live Server o desde una página publicada (no funciona dentro de la vista previa de Claude).', true);
+  } else if (salaInvitada) {
+    // Llegaste con el QR: se entra solo a la sala de tu amigo
+    const codigo = salaInvitada;
+    salaInvitada = '';
+    sala.codigoEscrito.value = codigo;
+    unirseASala(codigo);
   } else {
     estadoSala('Crea una sala y dile el código a tu amigo, o escribe el código de la sala de tu amigo.');
   }
@@ -5190,6 +5289,7 @@ function enviarMovimiento() {
 // Botones y formulario de la sala
 function prepararSala() {
   sala.crear.addEventListener('click', crearSala);
+  sala.compartir.addEventListener('click', compartirSala);
   sala.empezar.addEventListener('click', empezarPartidaRed);
   sala.formUnirse.addEventListener('submit', (evento) => {
     evento.preventDefault();
@@ -5221,6 +5321,7 @@ function iniciar() {
   dom.botonPantallaMenu.hidden = !pantallaCompletaDisponible();
   pintarBotonPantalla();
   pintarLogros();
+  leerInvitacion();   // versión 4.1: ¿llegó con el QR de un amigo?
   if ('ResizeObserver' in window) new ResizeObserver(ajustarCanvas).observe(dom.zona);
   window.addEventListener('resize', ajustarCanvas);
   window.requestAnimationFrame((ahora) => {
